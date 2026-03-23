@@ -3,9 +3,11 @@ package com.example.myagorawebapp
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
 import android.webkit.PermissionRequest
+import android.webkit.SslErrorHandler
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -64,7 +66,14 @@ class MainActivity : AppCompatActivity() {
         ws.cacheMode = WebSettings.LOAD_DEFAULT
         ws.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
 
-        webView.webViewClient = WebViewClient()
+        // 自定义 WebViewClient 以允许自签名证书（仅测试用）
+        webView.webViewClient = object : WebViewClient() {
+            override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
+                // 忽略 SSL 错误，允许自签名证书
+                handler?.proceed()
+            }
+        }
+
         webView.webChromeClient = object : WebChromeClient() {
             override fun onPermissionRequest(request: PermissionRequest) {
                 runOnUiThread {
