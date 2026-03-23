@@ -2,1741 +2,599 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>演播智联</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>演播智联 · 融媒体控制中心</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(145deg, #1e2b3a 0%, #2c3e50 100%);
             display: flex;
-            flex-direction: column;
-            padding: 10px;
-        }
-        
-        /* 页面通用样式 */
-        .page {
-            display: none;
-            flex: 1;
-            min-height: 0;
-        }
-        
-        .page.active {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* 一级页面特殊处理 */
-        #main-page.active {
-            display: block;
-        }
-        
-        /* 二级页面容器 */
-        .secondary-page-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            padding: 12px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-        
-        /* 一级页面容器 */
-        .main-page-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
-            width: 100%;
+            position: relative;
         }
-        
-        .header {
+
+        .home-card {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 45px 40px 50px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
             text-align: center;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #f0f0f0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
         }
-        
-        .header h1 {
-            color: #333;
-            font-size: 20px;
-            margin-bottom: 5px;
-            font-weight: 700;
-        }
-        
-        .header p {
-            color: #666;
-            font-size: 12px;
-        }
-        
-        .control-panel {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-        
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 600;
+            color: white;
+            letter-spacing: 1px;
             margin-bottom: 16px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
-        
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 20px;
+        }
+
+        .connection-group {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 60px;
+            padding: 15px 20px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 20px;
+        }
+
         .input-field {
-            width: 100%;
+            flex: 1;
+            min-width: 200px;
+            text-align: left;
         }
-        
+
         .input-field label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #555;
-            font-size: 12px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 6px;
         }
-        
+
         .input-field input {
             width: 100%;
-            padding: 10px;
-            border: 1.5px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 13px;
-            transition: all 0.3s;
-            background: white;
-        }
-        
-        .input-field input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-        }
-        
-        .input-field input::placeholder {
-            color: #aaa;
-            font-size: 12px;
-        }
-        
-        .token-hint {
-            font-size: 10px;
-            color: #888;
-            margin-top: 4px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .token-hint i {
-            color: #ff9800;
-        }
-        
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 16px;
-        }
-        
-        .main-btn {
-            padding: 14px 18px;
+            padding: 12px 18px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            min-height: 50px;
-        }
-        
-        .main-btn i {
-            font-size: 20px;
-        }
-        
-        .main-btn:active {
-            transform: scale(0.98);
-        }
-        
-        .main-btn:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        
-        .main-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-        
-        .call-btn {
-            background: linear-gradient(to right, #667eea, #764ba2);
-            color: white;
-        }
-        
-        .call-btn:hover {
-            background: linear-gradient(to right, #5a6fd8, #6b4190);
-        }
-        
-        .call-btn.in-call {
-            background: linear-gradient(to right, #ff6b6b, #ff5252);
-        }
-        
-        .call-btn.in-call:hover {
-            background: linear-gradient(to right, #ff5252, #e53935);
-        }
-        
-        .tally-btn {
-            background: linear-gradient(to right, #4CAF50, #2E7D32);
-            color: white;
-        }
-        
-        .tally-btn:hover {
-            background: linear-gradient(to right, #43a047, #1b5e20);
-        }
-        
-        /* 进入返送按钮专用橙色 */
-        #goToReturnBtn {
-            background: #FF9800;
-            background-image: none;
-        }
-        #goToReturnBtn:hover {
-            background: #F57C00;
-        }
-        
-        /* 返回主页面按钮样式 */
-        .back-btn {
-            background: #6c757d;
-            color: white;
-            padding: 14px 18px;
-            border-radius: 8px;
-            border: none;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            min-height: 50px;
-            margin-bottom: 8px;
-            flex-shrink: 0;
-        }
-        .back-btn i {
-            font-size: 20px;
-        }
-        .back-btn:hover {
-            background: #5a6268;
-        }
-        
-        /* 通话页面样式 */
-        .call-page .button-group {
-            flex-direction: row;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-        
-        .call-page .main-btn {
-            flex: 1;
-            min-width: 120px;
-        }
-        
-        .mic-btn {
-            background: #4CAF50;
-            color: white;
-        }
-        
-        .mic-btn:hover {
-            background: #43a047;
-        }
-        
-        .mic-btn.muted {
-            background: #ff6b6b;
-        }
-        
-        .mic-btn.muted:hover {
-            background: #ff5252;
-        }
-        
-        .call-status {
-            text-align: center;
-            margin: 10px 0;
-            padding: 8px;
-            border-radius: 6px;
-            background: #f8f9fa;
-            font-weight: 600;
-            font-size: 12px;
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .call-status.connected {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .call-status.disconnected {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .members-container {
-            background: white;
-            border-radius: 10px;
-            padding: 14px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-            margin-top: 12px;
-            flex: 1;
-            overflow-y: auto;
-            min-height: 0;
-        }
-        
-        .members-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #f0f0f0;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 1;
-        }
-        
-        .members-header h2 {
-            color: #333;
-            font-size: 14px;
-        }
-        
-        .members-count {
-            background: #667eea;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 11px;
-        }
-        
-        .members-list {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-        
-        .member-card {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-            border: 1.5px solid transparent;
-        }
-        
-        .member-card:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
-            border-color: #667eea;
-        }
-        
-        .member-card.local {
-            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
-        }
-        
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: white;
-            flex-shrink: 0;
-        }
-        
-        .avatar.local {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-        
-        .avatar.remote {
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
-        }
-        
-        .member-info {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .member-name {
-            font-weight: 600;
-            color: #333;
-            font-size: 13px;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .member-uid {
-            color: #666;
-            font-size: 10px;
-            margin-bottom: 3px;
-        }
-        
-        .member-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            padding: 2px 5px;
-            border-radius: 8px;
-            font-size: 9px;
-            font-weight: 600;
-        }
-        
-        .status-online {
-            background: #e8f5e9;
-            color: #2E7D32;
-        }
-        
-        .status-muted {
-            background: #ffebee;
-            color: #c62828;
-        }
-        
-        .status-speaker {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-        
-        .member-actions {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .action-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
-        
-        .mute-btn {
-            background: #ffebee;
-            color: #c62828;
-        }
-        
-        .mute-btn:hover {
-            background: #ffcdd2;
-        }
-        
-        .mute-btn.muted {
-            background: #e0e0e0;
-            color: #616161;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 20px 10px;
-            color: #666;
-        }
-        
-        .empty-state i {
-            font-size: 32px;
-            margin-bottom: 10px;
-            display: block;
-            color: #ccc;
-        }
-        
-        .empty-state p {
-            font-size: 12px;
-        }
-        
-        .footer {
-            text-align: center;
-            margin-top: 10px;
-            color: #666;
-            font-size: 10px;
-            padding-top: 8px;
-            border-top: 1px solid #eee;
-            flex-shrink: 0;
-        }
-        
-        /* TALLY显示页面样式 */
-        .tally-page-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-        }
-        
-        .tally-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            background: #f8f9fa;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .tally-frame {
-            flex: 1;
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 6px;
-            background: white;
-            min-height: 0;
-        }
-        
-        /* 视频返送页面样式 (基于return.html移植) */
-        .return-page-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            gap: 10px;
-        }
-        .video-container {
-            margin: 0;
-            flex: 1;
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        .video-box {
-            width: 100%;
-            position: relative;
-            background: #1a1a1a;
-            border-radius: 12px;
-            overflow: hidden;
-            aspect-ratio: 16 / 9;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            flex-shrink: 0;
-        }
-        .video-box video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            background: #2c3e50;
-            transform: none;
-        }
-        .video-label {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(4px);
-        }
-        .no-video-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            font-size: 18px;
-            background: #2c3e50;
-        }
-        .fullscreen-btn, .exit-fullscreen-btn {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.5);
             color: white;
+            font-size: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .input-field input:focus {
+            border-color: #f1c40f;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 0 2px rgba(241, 196, 15, 0.3);
+        }
+
+        .input-field input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .port-hint {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 5px;
+            margin-left: 12px;
+        }
+
+        .button-grid {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .nav-btn {
+            flex: 1 1 260px;
             border: none;
-            border-radius: 5px;
-            padding: 8px 12px;
+            border-radius: 40px;
+            padding: 28px 20px;
+            font-size: 1.8rem;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border: 2px solid transparent;
             cursor: pointer;
-            z-index: 10;
-            font-size: 16px;
-            transition: background 0.2s;
-            min-width: auto;
         }
-        .fullscreen-btn:hover, .exit-fullscreen-btn:hover {
-            background: rgba(0,0,0,0.8);
+
+        .nav-btn .icon {
+            font-size: 3.8rem;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
         }
-        .exit-fullscreen-btn {
-            display: none;
+
+        .nav-btn span:not(.icon) {
+            font-size: 1.5rem;
+            font-weight: 700;
         }
-        /* 模拟全屏模式：固定铺满整个屏幕 */
-        .video-box.fullscreen-mode {
+
+        .nav-btn small {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-weight: normal;
+            margin-top: 4px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 28px 40px rgba(0, 0, 0, 0.45);
+            border-color: #f1c40f;
+            filter: brightness(1.02);
+        }
+
+        .btn-tally {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-agora {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-video {
+            background: linear-gradient(145deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .footer-note {
+            margin-top: 48px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .iframe-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 10000;
-            background: black;
-            margin: 0;
-            padding: 0;
-            border-radius: 0;
-            aspect-ratio: auto;
-        }
-        .video-box.fullscreen-mode video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            background: #0f1a1f;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.25s ease;
         }
-        /* 竖屏旋转类：视频旋转90度并居中，适应竖屏 */
-        .video-box.fullscreen-mode video.rotate-portrait {
-            transform: translate(-50%, -50%) rotate(90deg);
-            width: 100vh;
-            height: 100vw;
-            object-fit: cover;
+
+        .iframe-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .iframe-header {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .module-title {
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 18px;
+            border-radius: 60px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-home-btn {
+            background: #f1c40f;
+            border: none;
+            padding: 10px 26px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #1e2b3a;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-home-btn:hover {
+            background: #ffd966;
+            transform: scale(1.02);
+        }
+
+        .iframe-container {
+            flex: 1;
+            position: relative;
+            background: #000;
+        }
+
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #111;
+        }
+
+        .iframe-loading {
             position: absolute;
             top: 50%;
             left: 50%;
-        }
-        /* 隐藏其他所有页面元素（全屏容器外的部分） */
-        .video-box.fullscreen-mode ~ * {
-            display: none !important;
-        }
-        /* 全屏模式下显示退出按钮，隐藏进入按钮 */
-        .video-box.fullscreen-mode .exit-fullscreen-btn {
-            display: block !important;
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            z-index: 10001;
-            background: rgba(0,0,0,0.5);
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 16px 28px;
+            border-radius: 60px;
             color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .video-box.fullscreen-mode .fullscreen-btn {
-            display: none !important;
-        }
-        .volume-control {
-            margin: 0;
-            padding: 10px 15px;
-            background: #e8f4fd;
-            border-radius: 12px;
-            border-left: 4px solid #f39c12;
+            font-weight: 500;
+            z-index: 10;
+            pointer-events: none;
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            flex-shrink: 0;
+            gap: 12px;
         }
-        .volume-control label {
-            font-weight: 600;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-        .volume-control input[type=range] {
-            flex: 1;
-            min-width: 200px;
-            height: 4px;
-            -webkit-appearance: none;
-            background: #d0d0d0;
-            border-radius: 2px;
-            outline: none;
-        }
-        .volume-control input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            background: #f39c12;
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #f1c40f;
             border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            animation: spin 0.8s linear infinite;
         }
-        .volume-control span {
-            min-width: 45px;
-            font-weight: 600;
-            color: #f39c12;
-            font-size: 14px;
-            flex-shrink: 0;
-            text-align: right;
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        .members-info {
-            background: white;
-            border-radius: 15px;
-            padding: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .members-info h3 {
-            margin-bottom: 5px;
-            color: #333;
-            font-size: 14px;
-        }
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #e74c3c;
-        }
-        .status-dot.connected {
-            background: #2ecc71;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        
-        /* 移动端优化 */
-        @media (max-width: 768px) {
-            body {
-                padding: 6px;
+
+        @media (max-width: 750px) {
+            .home-card {
+                padding: 30px 20px;
             }
-            .secondary-page-container {
-                padding: 10px;
-                border-radius: 10px;
+            .nav-btn {
+                padding: 22px 12px;
             }
-            .main-page-container {
-                padding: 16px;
-                border-radius: 12px;
+            .nav-btn .icon {
+                font-size: 3rem;
             }
-            .header h1 {
-                font-size: 18px;
+            .nav-btn span:not(.icon) {
+                font-size: 1.3rem;
             }
-            .header p {
-                font-size: 11px;
-            }
-            .control-panel {
-                padding: 12px;
-            }
-            .main-btn {
-                padding: 12px 16px;
-                font-size: 14px;
-                min-height: 48px;
-            }
-            .main-btn i {
-                font-size: 18px;
-            }
-            .back-btn {
-                padding: 12px 16px;
-                font-size: 14px;
-                min-height: 48px;
-            }
-            .back-btn i {
-                font-size: 18px;
-            }
-            .call-page .button-group {
+            .connection-group {
                 flex-direction: column;
+                align-items: stretch;
+                border-radius: 32px;
+                gap: 12px;
             }
-            .call-page .main-btn {
-                min-width: 100%;
-            }
-            .members-list {
-                grid-template-columns: 1fr;
-            }
-            .volume-control {
-                padding: 8px 12px;
-                gap: 8px;
-                flex-wrap: nowrap;
-            }
-            .volume-control input[type=range] {
-                min-width: 100px;
+            .iframe-header {
+                padding: 10px 16px;
             }
         }
-        
-        @media (min-width: 769px) {
-            .input-group {
-                flex-direction: row;
-            }
-            .input-field {
-                flex: 1;
-            }
-            .button-group {
-                flex-direction: row;
-            }
-            .main-btn {
-                width: auto;
-                flex: 1;
-            }
-            .members-list {
-                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            }
+
+        .error-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e74c3c;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 500;
+            z-index: 3000;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            backdrop-filter: blur(8px);
+            font-size: 0.9rem;
+            max-width: 90vw;
+            text-align: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
         }
-        
-        * {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        input, textarea {
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
+
+        .error-toast.show {
+            opacity: 1;
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- 一级页面 -->
-    <div id="main-page" class="page active">
-        <div class="main-page-container">
-            <div class="header">
-                <h1>🎤 演播智联</h1>
-                <p>选择功能模块</p>
-            </div>
-            
-            <!-- 音频通话模块 -->
-            <div class="control-panel">
-                <h3 style="margin-bottom: 15px; font-size: 16px; color: #333;"><i class="fas fa-microphone"></i> 音频通话</h3>
-                <div class="input-group">
-                    <div class="input-field">
-                        <label for="channelName"><i class="fas fa-hashtag"></i> 频道名称</label>
-                        <input type="text" id="channelName" placeholder="audio" autocomplete="on" value="audio">
-                    </div>
-                    <div class="input-field">
-                        <label for="tokenInput"><i class="fas fa-key"></i> 鉴权令牌</label>
-                        <input type="text" id="tokenInput" placeholder="管理员下发的临时Token" autocomplete="off">
-                    </div>
-                </div>
-                <div class="button-group">
-                    <button class="main-btn call-btn" id="joinCallBtn">
-                        <i class="fas fa-phone-alt"></i>
-                        <span>加入通话</span>
-                    </button>
-                </div>
-            </div>
 
-            <!-- TALLY显示独立模块 -->
-            <div class="control-panel">
-                <h3 style="margin-bottom: 15px; font-size: 16px; color: #333;"><i class="fas fa-desktop"></i> TALLY显示</h3>
-                <div class="input-group">
-                    <div class="input-field">
-                        <input type="text" id="urlInput" placeholder="输入TALLY显示地址" autocomplete="off">
-                    </div>
-                </div>
-                <div class="button-group">
-                    <button class="main-btn tally-btn" id="showTallyBtn">
-                        <i class="fas fa-desktop"></i>
-                        <span>TALLY显示</span>
-                    </button>
-                </div>
-            </div>
+    <div class="home-card" id="homeCard">
+        <h1>🎙️ 演播智联</h1>
+        <div class="subtitle">自建媒体辅助控制中心</div>
 
-            <!-- 视频返送独立模块 -->
-            <div class="control-panel" style="margin-top: 20px;">
-                <h3 style="margin-bottom: 15px; font-size: 16px; color: #333;"><i class="fas fa-video"></i> 视频返送</h3>
-                <div class="input-group">
-                    <div class="input-field">
-                        <label for="returnChannelName"><i class="fas fa-hashtag"></i> 频道名称</label>
-                        <input type="text" id="returnChannelName" placeholder="如：video-room" autocomplete="off" value="video">
-                    </div>
-                    <div class="input-field">
-                        <label for="returnToken"><i class="fas fa-key"></i> 鉴权令牌</label>
-                        <input type="text" id="returnToken" placeholder="管理员下发的临时Token" autocomplete="on">
-                    </div>
-                </div>
-                <div class="button-group">
-                    <button class="main-btn call-btn" id="goToReturnBtn">
-                        <i class="fas fa-play"></i>
-                        <span>进入返送</span>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="footer">
-                <p>个人自研 欢迎试用</p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 二级页面1：通话页面 -->
-    <div id="call-page" class="page">
-        <div class="secondary-page-container">
-            <button class="back-btn" onclick="goBack()">
-                <i class="fas fa-arrow-left"></i>
-                返回主页面
-            </button>
-            
-            <div class="header">
-                <h1>🎤 音频通话</h1>
-                <p>频道：<span id="currentChannel"></span></p>
-            </div>
-            
-            <div class="control-panel">
-                <div class="button-group">
-                    <button class="main-btn call-btn" id="callToggle">
-                        <i class="fas fa-phone-alt"></i>
-                        <span id="callText">加入通话</span>
-                    </button>
-                    <button class="main-btn mic-btn" id="micToggle" disabled>
-                        <i class="fas fa-microphone"></i>
-                        <span id="micText">开启话筒</span>
-                    </button>
-                </div>
+        <div class="connection-group">
+            <div class="input-field">
+                <label>🌐 服务器地址</label>
+                <input type="text" id="serverAddress" placeholder="例如: 192.168.1.100 或 studio.example.com" autocomplete="off">
                 
-                <div id="callStatus" class="call-status">
-                    <i class="fas fa-circle-notch fa-spin"></i>
-                    <span id="statusText">正在连接...</span>
-                </div>
             </div>
-            
-            <div class="members-container">
-                <div class="members-header">
-                    <h2><i class="fas fa-users"></i> 通话成员</h2>
-                    <div class="members-count">
-                        <span id="memberCount">0</span> 人在线
-                    </div>
-                </div>
-                
-                <div id="membersList" class="members-list">
-                    <div class="empty-state">
-                        <i class="fas fa-user-friends"></i>
-                        <p>频道内暂无成员</p>
-                        <p style="font-size: 11px; margin-top: 5px;">加入频道后，成员列表将在这里显示</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer">
-                <p>个人自研 欢迎试用</p>
+            <div class="input-field">
+                <label>🔌 服务端口</label>
+                <input type="text" id="serverPort" placeholder="8082" value="8082" autocomplete="off">
+               
             </div>
         </div>
+
+        <div class="button-grid">
+            <div class="nav-btn btn-tally" data-page="monitor.html" data-module="TALLY 监视器">
+                <span class="icon">🔴</span>
+                <span>TSL UMD V5<br>TALLY</span>
+                <small>设备TALLY实时监控</small>
+            </div>
+            <div class="nav-btn btn-agora" data-page="mobile.html" data-module="INTERCOM 通话">
+                <span class="icon">🎤</span>
+                <span>INTERCOM<br>通话</span>
+                <small>音频通话</small>
+            </div>
+            <div class="nav-btn btn-video" data-page="return.html" data-module="视频返送">
+                <span class="icon">📹</span>
+                <span>PGM返送</span>
+                <small>音视频返送</small>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            <span>🔄 点击【返回主页】退出模块</span>
+        </div>
     </div>
-    
-    <!-- 二级页面2：TALLY显示页面 -->
-    <div id="tally-page" class="page">
-        <div class="secondary-page-container">
-            <button class="back-btn" onclick="goBack()">
-                <i class="fas fa-arrow-left"></i>
-                返回主页面
+
+    <div class="iframe-overlay" id="iframeOverlay">
+        <div class="iframe-header">
+            <div class="module-title" id="currentModuleTitle">
+                <span>📡</span> 模块加载中...
+            </div>
+            <button class="back-home-btn" id="closeIframeBtn">
+                ← 返回主页
             </button>
-            
-            <div class="header">
-                <h1>📺 TALLY显示</h1>
+        </div>
+        <div class="iframe-container" id="iframeContainer">
+            <div class="iframe-loading" id="iframeLoading">
+                <div class="spinner"></div>
+                <span>正在连接演播服务器...</span>
             </div>
-            
-            <div class="tally-page-content">
-                <div class="tally-container">
-                    <!-- iframe将在这里动态创建 -->
-                </div>
-            </div>
-            
-            <div class="footer">
-                <p>个人自研 欢迎试用</p>
-            </div>
+            <iframe id="dynamicIframe" title="演播模块" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-presentation allow-downloads allow-popups-to-escape-sandbox allow-microphone allow-camera" allow="camera; microphone; autoplay; display-capture; fullscreen"></iframe>
         </div>
     </div>
 
-    <!-- 二级页面4：视频返送页面 -->
-    <div id="return-page" class="page">
-        <div class="secondary-page-container">
-            <button class="back-btn" onclick="goBack()">
-                <i class="fas fa-arrow-left"></i>
-                返回主页面
-            </button>
-            
-            <div class="header">
-                <h1>📺 视频返送</h1>
-            </div>
+    <div id="errorToast" class="error-toast"></div>
 
-            <!-- 状态栏 -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div class="status-dot" id="returnStatusDot"></div>
-                    <span id="returnStatusText">就绪</span>
-                </div>
-                <div>
-                    <i class="fas fa-users"></i> 在线: <span id="returnOnlineCount">0</span>
-                </div>
-            </div>
-
-            <!-- 控制面板 -->
-            <div class="control-panel" style="margin-bottom: 10px; padding: 12px;">
-                <div class="button-group" style="margin-top: 0;">
-                    <button class="main-btn call-btn" id="returnCallToggle">
-                        <i class="fas fa-phone-alt"></i>
-                        <span id="returnCallText">加入频道</span>
-                    </button>
-                    <button class="main-btn remote-btn" id="returnRemoteToggle" disabled>
-                        <i class="fas fa-eye"></i>
-                        <span id="returnRemoteText">开启接收</span>
-                    </button>
-                </div>
-                <div id="returnCallStatus" class="call-status" style="margin-top: 8px;">
-                    <i class="fas fa-circle-notch fa-spin"></i> <span id="returnCallStatusText">准备就绪</span>
-                </div>
-            </div>
-
-            <!-- 视频显示区域 -->
-            <div class="return-page-content">
-                <div class="video-container">
-                    <div class="video-box" id="returnVideoBox">
-                        <video id="returnVideo" autoplay playsinline></video>
-                        <div class="video-label">返送</div>
-                        <div class="no-video-placeholder" id="returnPlaceholder" style="display: flex;">接收已关闭</div>
-                        <button class="fullscreen-btn" id="returnEnterFullscreenBtn" title="全屏"><i class="fas fa-expand"></i></button>
-                        <button class="exit-fullscreen-btn" id="returnExitFullscreenBtn" title="退出全屏"><i class="fas fa-compress"></i></button>
-                    </div>
-                </div>
-
-                <!-- 音量控制 -->
-                <div class="volume-control">
-                    <label><i class="fas fa-volume-up"></i> 音量</label>
-                    <input type="range" id="returnVolumeSlider" min="0" max="100" value="50">
-                    <span id="returnVolumeValue">50%</span>
-                </div>
-
-                <!-- 在线成员简况 -->
-                <div class="members-info">
-                    <h3><i class="fas fa-user-friends"></i> 当前在线</h3>
-                    <p><span id="returnOnlineCount2">0</span> 人在频道中</p>
-                </div>
-            </div>
-            
-            <div class="footer">
-                <p>个人自研 欢迎试用</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- 引入声网 Web SDK -->
-    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.21.0.js"></script>
     <script>
-        // 页面状态管理器
-        const pageManager = {
-            currentPage: 'main-page',
-            callPageState: null,
-            tallyState: {
-                url: '',
-                iframe: null,
-                isInitialized: false
-            },
-            returnPageState: null
-        };
-        
-        // 页面切换函数
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            const targetPage = document.getElementById(pageId);
-            targetPage.classList.add('active');
-            pageManager.currentPage = pageId;
+        (function() {
+            const serverAddressInput = document.getElementById('serverAddress');
+            const serverPortInput = document.getElementById('serverPort');
+            const homeCard = document.getElementById('homeCard');
+            const iframeOverlay = document.getElementById('iframeOverlay');
+            const dynamicIframe = document.getElementById('dynamicIframe');
+            const iframeLoading = document.getElementById('iframeLoading');
+            const closeIframeBtn = document.getElementById('closeIframeBtn');
+            const currentModuleTitleSpan = document.getElementById('currentModuleTitle');
             
-            // 页面特定逻辑
-            if (pageId === 'call-page' && pageManager.callPageState && pageManager.callPageState.isInCall) {
-                setTimeout(() => {
-                    updateCallPageDisplay();
-                    updateMembersDisplay();
-                }, 100);
+            let toastTimeout = null;
+            function showErrorMsg(msg) {
+                const toast = document.getElementById('errorToast');
+                toast.textContent = msg;
+                toast.classList.add('show');
+                if (toastTimeout) clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 4000);
             }
-            if (pageId === 'return-page') {
-                if (pageManager.returnPageState && pageManager.returnPageState.isInCall) {
-                    setTimeout(() => {
-                        updateReturnPageDisplay();
-                    }, 100);
-                }
-            }
-        }
-        
-        function goBack() {
-            showPage('main-page');
-        }
-        
-        // 创建或更新TALLY页面iframe
-        function setupTallyIframe(url) {
-            const container = document.querySelector('#tally-page .tally-container');
-            if (!container) return;
-            container.innerHTML = '';
-            const iframe = document.createElement('iframe');
-            iframe.className = 'tally-frame';
-            iframe.src = url;
-            iframe.frameborder = "0";
-            iframe.allow = "autoplay; encrypted-media; gyroscope; accelerometer";
-            iframe.allowFullscreen = true;
-            iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms allow-modals');
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.minHeight = '0';
-            iframe.style.flex = '1';
-            container.appendChild(iframe);
-            pageManager.tallyState.url = url;
-            pageManager.tallyState.iframe = iframe;
-            pageManager.tallyState.isInitialized = true;
-            iframe.onerror = function(e) {
-                alert('TALLY页面加载失败，请检查网址是否正确');
-            };
-        }
-        
-        // 初始化主页面按钮事件
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('joinCallBtn').addEventListener('click', async function() {
-                const channelName = document.getElementById('channelName').value.trim();
-                const token = document.getElementById('tokenInput').value.trim();
-                if (!channelName) { alert('请输入频道名称！'); return; }
-                document.getElementById('currentChannel').textContent = channelName;
-                showPage('call-page');
-                if (!pageManager.callPageState || !pageManager.callPageState.isInCall) {
-                    try {
-                        await joinChannelFromMainPage(channelName, token);
-                    } catch (error) {
-                        console.error('加入频道失败:', error);
-                        alert(`加入频道失败: ${error.message}`);
-                        showPage('main-page');
-                    }
-                }
-            });
-            
-            document.getElementById('showTallyBtn').addEventListener('click', function() {
-                const url = document.getElementById('urlInput').value.trim();
-                if (!url) { alert('请输入TALLY网址！'); return; }
-                try { new URL(url); } catch (e) { alert('请输入有效的网址（包含http://或https://）'); return; }
-                const urlChanged = pageManager.tallyState.url !== url;
-                pageManager.tallyState.url = url;
-                showPage('tally-page');
-                if (!pageManager.tallyState.isInitialized || urlChanged) {
-                    setupTallyIframe(url);
-                } else {
-                    const container = document.querySelector('#tally-page .tally-container');
-                    const iframe = pageManager.tallyState.iframe;
-                    if (container && iframe && !container.contains(iframe)) {
-                        container.innerHTML = '';
-                        container.appendChild(iframe);
-                    }
-                }
-            });
 
-            // 视频返送按钮事件
-            document.getElementById('goToReturnBtn').addEventListener('click', async function() {
-                const channel = document.getElementById('returnChannelName').value.trim();
-                const token = document.getElementById('returnToken').value.trim();
-                if (!channel) {
-                    alert('请输入频道名称');
+            function sanitizeAddress(raw) {
+                let clean = raw.trim();
+                if (!clean) return '';
+                clean = clean.replace(/^https?:\/\//i, '');
+                clean = clean.replace(/\/+$/, '');
+                return clean;
+            }
+
+            function getValidPort(rawPort) {
+                let portStr = rawPort.trim();
+                if (portStr === "") return 8082;
+                let portNum = parseInt(portStr, 10);
+                if (isNaN(portNum) || portNum <= 0 || portNum > 65535) return 8082;
+                return portNum;
+            }
+
+            // 判断主机名是否为有效地址（过滤微信等环境中的特殊字符串）
+            function isValidHostname(hostname) {
+                if (!hostname) return false;
+                const invalidPatterns = [
+                    'com.tencent', 'fileprovider', 'wechat', 'localhost', '127.0.0.1',
+                    '0.0.0.0', '::1', 'null', 'undefined'
+                ];
+                const lowerHost = hostname.toLowerCase();
+                for (let pattern of invalidPatterns) {
+                    if (lowerHost.includes(pattern)) return false;
+                }
+                // 简单IP或域名格式：包含点或字母，且长度合理
+                return /^[a-zA-Z0-9.-]+$/.test(hostname) && hostname.length > 0;
+            }
+
+            // 强制使用 HTTPS 协议
+            function buildTargetUrl(page) {
+                let addressRaw = serverAddressInput.value;
+                let portRaw = serverPortInput.value;
+                let address = sanitizeAddress(addressRaw);
+                let port = getValidPort(portRaw);
+                
+                if (address === "") {
+                    address = window.location.hostname;
+                    if (!isValidHostname(address)) address = '';
+                    if (!address) address = '127.0.0.1';
+                }
+                
+                const protocol = 'https:';
+                let url = `${protocol}//${address}:${port}/${page}`;
+                return url;
+            }
+
+            function openModule(page, moduleDisplayName) {
+                let addrRaw = serverAddressInput.value.trim();
+                if (addrRaw === "") {
+                    showErrorMsg("请填写服务器地址 (例如 192.168.1.100)");
+                }
+                let portVal = serverPortInput.value.trim();
+                if (portVal === "") serverPortInput.value = "8082";
+                else {
+                    const portNum = parseInt(portVal, 10);
+                    if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
+                        showErrorMsg("端口号无效，已重置为8082");
+                        serverPortInput.value = "8082";
+                    }
+                }
+                if (!serverAddressInput.value.trim()) {
+                    let defaultHost = window.location.hostname;
+                    if (isValidHostname(defaultHost)) {
+                        serverAddressInput.value = defaultHost;
+                    }
+                }
+                
+                const targetUrl = buildTargetUrl(page);
+                if (!targetUrl || targetUrl.indexOf('//') === -1) {
+                    showErrorMsg("生成的URL无效，请确认服务器地址和端口");
                     return;
                 }
-                showPage('return-page');
-                if (!pageManager.returnPageState || !pageManager.returnPageState.isInCall) {
-                    try {
-                        await joinReturnChannel(channel, token || null);
-                    } catch (error) {
-                        console.error('加入返送频道失败:', error);
-                        alert(`加入返送频道失败: ${error.message}`);
-                        showPage('main-page');
+                
+                const titleText = moduleDisplayName || page;
+                currentModuleTitleSpan.innerHTML = `<span>${titleText}</span>`;
+                
+                homeCard.style.display = 'none';
+                iframeOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                iframeLoading.style.display = 'flex';
+                
+                if (window.loadTimeout) clearTimeout(window.loadTimeout);
+                window.loadTimeout = setTimeout(() => {
+                    if (iframeLoading && iframeLoading.style.display === 'flex') {
+                        iframeLoading.style.display = 'none';
+                        showErrorMsg("连接超时，请检查服务器地址、端口或服务状态");
                     }
+                }, 10000);
+                
+                dynamicIframe.onload = () => {
+                    clearTimeout(window.loadTimeout);
+                    iframeLoading.style.display = 'none';
+                };
+                
+                dynamicIframe.onerror = () => {
+                    clearTimeout(window.loadTimeout);
+                    iframeLoading.style.display = 'none';
+                    showErrorMsg(`无法加载模块: ${targetUrl} ，请验证服务器是否运行且端口可访问`);
+                };
+                
+                dynamicIframe.src = targetUrl;
+            }
+            
+            const btns = document.querySelectorAll('.nav-btn');
+            btns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = btn.getAttribute('data-page');
+                    const moduleName = btn.getAttribute('data-module') || '';
+                    if (!page) {
+                        showErrorMsg("页面配置缺失");
+                        return;
+                    }
+                    openModule(page, moduleName);
+                });
+            });
+            
+            closeIframeBtn.addEventListener('click', () => {
+                if (iframeOverlay.classList.contains('active')) {
+                    dynamicIframe.src = 'about:blank';
+                    iframeOverlay.classList.remove('active');
+                    iframeLoading.style.display = 'flex';
+                    document.body.style.overflow = '';
+                    if (window.loadTimeout) clearTimeout(window.loadTimeout);
+                    homeCard.style.display = 'block';
                 }
             });
             
-            initCallPage();
-            initReturnPage();
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && iframeOverlay.classList.contains('active')) {
+                    closeIframeBtn.click();
+                }
+            });
             
-            console.log('页面初始化完成');
-        });
-        
-        // ========== 通话页面功能（二级页面1） ==========
-        if (!pageManager.callPageState) {
-            pageManager.callPageState = {
-                rtcClient: null,
-                localAudioTrack: null,
-                isPublished: false,
-                isMicrophoneMuted: true,
-                isInCall: false,
-                members: new Map(),
-                currentChannelName: '',
-                currentUid: null
-            };
-        }
-        
-        const APP_ID = "4531524ecba946fd868fc547c6d269d7";
-        
-        function initCallPage() {
-            const callToggleBtn = document.getElementById('callToggle');
-            const micToggleBtn = document.getElementById('micToggle');
-            if (callToggleBtn) callToggleBtn.addEventListener('click', toggleCall);
-            if (micToggleBtn) micToggleBtn.addEventListener('click', toggleMicrophone);
-        }
-        
-        async function joinChannelFromMainPage(channelName, token = null) {
-            const hasMicPerm = await checkMicPermission();
-            if (!hasMicPerm) throw new Error('麦克风权限被拒绝');
-            try {
-                updateCallStatus('connecting', '正在加入频道...');
-                await initRtcClient();
-                const audioTrack = await createMicrophoneAudioTrack();
-                if (!audioTrack || !audioTrack.play) throw new Error("音频轨道创建失败");
-                pageManager.callPageState.localAudioTrack = audioTrack;
-                const uid = await pageManager.callPageState.rtcClient.join(APP_ID, channelName, token || null);
-                pageManager.callPageState.currentUid = uid;
-                pageManager.callPageState.currentChannelName = channelName;
-                addMember(uid, true, pageManager.callPageState.localAudioTrack);
-                await pageManager.callPageState.rtcClient.publish([pageManager.callPageState.localAudioTrack]);
-                pageManager.callPageState.isPublished = true;
-                pageManager.callPageState.isMicrophoneMuted = true;
-                pageManager.callPageState.localAudioTrack.setEnabled(false);
-                pageManager.callPageState.isInCall = true;
-                const localMember = Array.from(pageManager.callPageState.members.values()).find(m => m.isLocal);
-                if (localMember) localMember.isMuted = true;
-                updateCallPageDisplay();
-                updateMembersDisplay();
-                updateCallStatus('connected', `已加入频道：${channelName} | UID：${uid}`);
-                return uid;
-            } catch (error) {
-                if (pageManager.callPageState.localAudioTrack) pageManager.callPageState.localAudioTrack.close();
-                pageManager.callPageState.rtcClient = null;
-                pageManager.callPageState.isPublished = false;
-                pageManager.callPageState.isInCall = false;
-                pageManager.callPageState.members.clear();
-                updateCallPageDisplay();
-                updateCallStatus('error', `加入频道失败：${error.message}`);
-                throw error;
-            }
-        }
-        
-        function updateCallPageDisplay() {
-            const callToggleBtn = document.getElementById('callToggle');
-            const micToggleBtn = document.getElementById('micToggle');
-            const callTextSpan = document.getElementById('callText');
-            const micTextSpan = document.getElementById('micText');
-            if (callToggleBtn && callTextSpan) {
-                if (pageManager.callPageState.isInCall) {
-                    callToggleBtn.classList.add('in-call');
-                    callTextSpan.textContent = '退出通话';
-                    callToggleBtn.querySelector('i').className = 'fas fa-phone-slash';
+            function initDefaultConnection() {
+                if (!serverPortInput.value) serverPortInput.value = "8082";
+                let currentHost = window.location.hostname;
+                // 只有在主机名有效时才自动填入
+                if (isValidHostname(currentHost)) {
+                    serverAddressInput.value = currentHost;
                 } else {
-                    callToggleBtn.classList.remove('in-call');
-                    callTextSpan.textContent = '加入通话';
-                    callToggleBtn.querySelector('i').className = 'fas fa-phone-alt';
+                    serverAddressInput.placeholder = "例如: 192.168.1.100 或 studio.com";
+                    // 确保输入框为空，不残留任何无关字符串
+                    serverAddressInput.value = "";
                 }
             }
-            if (micToggleBtn && micTextSpan) {
-                micToggleBtn.disabled = !pageManager.callPageState.isInCall;
-                if (pageManager.callPageState.isMicrophoneMuted) {
-                    micTextSpan.textContent = '开启话筒';
-                    micToggleBtn.classList.remove('muted');
-                    micToggleBtn.querySelector('i').className = 'fas fa-microphone';
-                } else {
-                    micTextSpan.textContent = '关闭话筒';
-                    micToggleBtn.classList.add('muted');
-                    micToggleBtn.querySelector('i').className = 'fas fa-microphone-slash';
-                }
-            }
-        }
-        
-        async function initRtcClient() {
-            if (pageManager.callPageState.rtcClient) return;
-            try {
-                const rtcClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
-                pageManager.callPageState.rtcClient = rtcClient;
-                rtcClient.on("user-published", async (user, mediaType) => {
-                    try {
-                        await rtcClient.subscribe(user, mediaType);
-                        if (mediaType === "audio") {
-                            const remoteAudioTrack = user.audioTrack;
-                            remoteAudioTrack.play();
-                            addMember(user.uid, false, remoteAudioTrack);
-                            updateMembersDisplay();
-                        }
-                    } catch (subscribeErr) { console.error("订阅远程用户失败：", subscribeErr); }
-                });
-                rtcClient.on("user-unpublished", (user, mediaType) => {
-                    const member = pageManager.callPageState.members.get(user.uid.toString());
-                    if (member && !member.isLocal) { member.isMuted = true; updateMembersDisplay(); }
-                });
-                rtcClient.on("user-left", (user) => { removeMember(user.uid); updateMembersDisplay(); });
-                rtcClient.on("user-published", async (user, mediaType) => {
-                    if (mediaType === "audio" && pageManager.callPageState.members.has(user.uid.toString())) {
-                        try {
-                            await rtcClient.subscribe(user, mediaType);
-                            const remoteAudioTrack = user.audioTrack;
-                            remoteAudioTrack.play();
-                            const member = pageManager.callPageState.members.get(user.uid.toString());
-                            if (member) { member.audioTrack = remoteAudioTrack; member.isMuted = false; updateMembersDisplay(); }
-                        } catch (subscribeErr) { console.error("重新订阅用户失败：", subscribeErr); }
-                    }
-                });
-            } catch (initErr) { console.error("客户端初始化失败：", initErr); throw initErr; }
-        }
-        
-        async function createMicrophoneAudioTrack() {
-            try {
-                return await AgoraRTC.createMicrophoneAudioTrack({ encoderConfig: 'music_standard', AEC: true, ANS: true, AGC: true });
-            } catch (error) { console.error('创建麦克风音频轨道失败:', error); throw error; }
-        }
-        
-        function addMember(uid, isLocal = false, audioTrack = null) {
-            if (pageManager.callPageState.members.has(uid.toString())) {
-                const existingMember = pageManager.callPageState.members.get(uid.toString());
-                existingMember.audioTrack = audioTrack; existingMember.isMuted = false;
-            } else {
-                const member = { uid: uid, isLocal: isLocal, audioTrack: audioTrack, isMuted: false, isSpeaking: false };
-                pageManager.callPageState.members.set(uid.toString(), member);
-            }
-        }
-        
-        function removeMember(uid) { pageManager.callPageState.members.delete(uid.toString()); }
-        
-        function updateMembersDisplay() {
-            const membersListDiv = document.getElementById('membersList');
-            const memberCountSpan = document.getElementById('memberCount');
-            if (!membersListDiv || !memberCountSpan) return;
-            if (pageManager.callPageState.members.size === 0) {
-                membersListDiv.innerHTML = `<div class="empty-state"><i class="fas fa-user-friends"></i><p>频道内暂无成员</p><p style="font-size: 11px; margin-top: 5px;">加入频道后，成员列表将在这里显示</p></div>`;
-                memberCountSpan.textContent = "0"; return;
-            }
-            memberCountSpan.textContent = pageManager.callPageState.members.size.toString();
-            let membersHTML = "";
-            pageManager.callPageState.members.forEach(member => {
-                const isLocal = member.isLocal; const uid = member.uid;
-                const colors = ['#667eea', '#764ba2', '#4CAF50', '#FF9800', '#E91E63', '#9C27B0'];
-                const colorIndex = parseInt(uid) % colors.length || 0;
-                let statusClass = "status-online"; let statusText = "在线"; let statusIcon = "fa-circle";
-                let isActuallyMuted = member.isMuted;
-                if (isLocal) isActuallyMuted = pageManager.callPageState.isMicrophoneMuted;
-                if (isActuallyMuted) { statusClass = "status-muted"; statusText = "已静音"; statusIcon = "fa-microphone-slash"; }
-                else if (member.isSpeaking) { statusClass = "status-speaker"; statusText = "正在发言"; statusIcon = "fa-volume-up"; }
-                const muteIcon = isActuallyMuted ? 'fa-microphone-slash' : 'fa-microphone';
-                const muteTitle = isActuallyMuted ? '取消静音' : '静音';
-                const muteBtnClass = isActuallyMuted ? 'mute-btn muted' : 'mute-btn';
-                membersHTML += `<div class="member-card ${isLocal ? 'local' : ''}"><div class="avatar ${isLocal ? 'local' : 'remote'}" style="background: ${colors[colorIndex]}">${isLocal ? '我' : '用户'}</div><div class="member-info"><div class="member-name">${isLocal ? '我 (本地)' : `用户 ${uid}`}</div><div class="member-uid">UID: ${uid}</div><div class="member-status ${statusClass}"><i class="fas ${statusIcon}"></i>${statusText}</div></div><div class="member-actions"><button class="action-btn ${muteBtnClass}" onclick="callPageToggleMemberMute('${uid}')" title="${muteTitle}" ${isLocal ? 'disabled' : ''}><i class="fas ${muteIcon}"></i></button></div></div>`;
-            });
-            membersListDiv.innerHTML = membersHTML;
-        }
-        
-        window.callPageToggleMemberMute = function(uid) {
-            const member = pageManager.callPageState.members.get(uid);
-            if (!member) return;
-            if (member.isLocal) toggleMicrophone();
-            else { if (member.audioTrack) { if (member.isMuted) member.audioTrack.play(); else member.audioTrack.stop(); member.isMuted = !member.isMuted; updateMembersDisplay(); } }
-        };
-        
-        async function checkMicPermission() {
-            try { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); stream.getTracks().forEach(track => track.stop()); return true; }
-            catch (e) { console.error("麦克风权限失败：", e); throw new Error(`麦克风权限检测失败：${e.message}`); }
-        }
-        
-        function updateCallStatus(status, message) {
-            const callStatusDiv = document.getElementById('callStatus'); const statusTextSpan = document.getElementById('statusText');
-            if (!callStatusDiv || !statusTextSpan) return;
-            callStatusDiv.style.display = 'block'; callStatusDiv.className = 'call-status';
-            if (status === 'connecting') statusTextSpan.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${message}`;
-            else if (status === 'connected') { callStatusDiv.classList.add('connected'); statusTextSpan.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`; }
-            else if (status === 'disconnected') { callStatusDiv.classList.add('disconnected'); statusTextSpan.innerHTML = `<i class="fas fa-times-circle"></i> ${message}`; }
-            else if (status === 'error') { callStatusDiv.classList.add('disconnected'); statusTextSpan.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`; }
-            if (status === 'connected' || status === 'error') setTimeout(() => { if (callStatusDiv && (callStatusDiv.classList.contains('connected') || callStatusDiv.classList.contains('disconnected'))) callStatusDiv.style.display = 'none'; }, 5000);
-        }
-        
-        async function toggleCall() {
-            const callToggleBtn = document.getElementById('callToggle'); const micToggleBtn = document.getElementById('micToggle');
-            if (!callToggleBtn || !micToggleBtn) return;
-            if (pageManager.callPageState.isInCall) await leaveChannel();
-            else {
-                const channelName = document.getElementById('currentChannel').textContent;
-                if (!channelName) { alert("频道名称未设置！"); return; }
-                const token = document.getElementById('tokenInput') ? document.getElementById('tokenInput').value.trim() : '';
-                try { await joinChannelFromMainPage(channelName, token); } catch (error) { alert(`加入频道失败: ${error.message}`); }
-            }
-        }
-        
-        function toggleMicrophone() {
-            if (!pageManager.callPageState.localAudioTrack) return;
-            if (pageManager.callPageState.isMicrophoneMuted) { pageManager.callPageState.localAudioTrack.setEnabled(true); pageManager.callPageState.isMicrophoneMuted = false; }
-            else { pageManager.callPageState.localAudioTrack.setEnabled(false); pageManager.callPageState.isMicrophoneMuted = true; }
-            const localMember = Array.from(pageManager.callPageState.members.values()).find(m => m.isLocal);
-            if (localMember) localMember.isMuted = pageManager.callPageState.isMicrophoneMuted;
-            updateMembersDisplay(); updateCallPageDisplay();
-        }
-        
-        async function leaveChannel() {
-            try {
-                updateCallStatus('connecting', '正在离开频道...');
-                const callToggleBtn = document.getElementById('callToggle'); if (callToggleBtn) callToggleBtn.disabled = true;
-                if (pageManager.callPageState.localAudioTrack) { pageManager.callPageState.localAudioTrack.close(); pageManager.callPageState.localAudioTrack = null; }
-                if (pageManager.callPageState.rtcClient) { await pageManager.callPageState.rtcClient.leave(); pageManager.callPageState.rtcClient = null; }
-                pageManager.callPageState.members.clear(); pageManager.callPageState.isPublished = false; pageManager.callPageState.isMicrophoneMuted = true; pageManager.callPageState.isInCall = false; pageManager.callPageState.currentChannelName = ''; pageManager.callPageState.currentUid = null;
-                updateMembersDisplay(); updateCallPageDisplay();
-                if (callToggleBtn) callToggleBtn.disabled = false;
-                updateCallStatus('disconnected', '已退出通话');
-            } catch (leaveErr) { console.error("退出频道失败：", leaveErr); updateCallStatus('error', `退出通话失败：${leaveErr.message}`); const callToggleBtn = document.getElementById('callToggle'); if (callToggleBtn) callToggleBtn.disabled = false; }
-        }
-        
-        // ========== 视频返送页面功能（二级页面4） ==========
-        if (!pageManager.returnPageState) {
-            pageManager.returnPageState = {
-                rtcClient: null,
-                isInCall: false,
-                isReceiving: true,
-                remoteUsers: new Map(),
-                subscribedVideoUsers: new Map(),
-                subscribedAudioUsers: new Map(),
-                currentChannelName: '',
-                currentUid: null
-            };
-        }
-        
-        function initReturnPage() {
-            const returnCallToggle = document.getElementById('returnCallToggle');
-            const returnRemoteToggle = document.getElementById('returnRemoteToggle');
-            const returnVolumeSlider = document.getElementById('returnVolumeSlider');
-            const returnEnterFullscreen = document.getElementById('returnEnterFullscreenBtn');
-            const returnExitFullscreen = document.getElementById('returnExitFullscreenBtn');
-            const returnVideoBox = document.getElementById('returnVideoBox');
-            const returnVideo = document.getElementById('returnVideo');
+            initDefaultConnection();
             
-            if (returnCallToggle) returnCallToggle.addEventListener('click', toggleReturnCall);
-            if (returnRemoteToggle) returnRemoteToggle.addEventListener('click', toggleReturnRemote);
-            if (returnVolumeSlider) {
-                returnVolumeSlider.addEventListener('input', function(e) {
-                    document.getElementById('returnVolumeValue').textContent = e.target.value + '%';
-                    setReturnAudioVolume(parseInt(e.target.value));
-                });
-            }
-            // 模拟全屏功能（兼容Android WebView），并根据屏幕方向自动旋转
-            if (returnEnterFullscreen) {
-                returnEnterFullscreen.addEventListener('click', () => {
-                    returnVideoBox.classList.add('fullscreen-mode');
-                    // 检测屏幕方向：如果竖屏，则添加旋转类
-                    if (window.innerHeight > window.innerWidth) {
-                        returnVideo.classList.add('rotate-portrait');
-                    } else {
-                        returnVideo.classList.remove('rotate-portrait');
-                    }
-                });
-            }
-            if (returnExitFullscreen) {
-                returnExitFullscreen.addEventListener('click', () => {
-                    returnVideoBox.classList.remove('fullscreen-mode');
-                    returnVideo.classList.remove('rotate-portrait'); // 移除旋转
-                });
-            }
-            // 可选：监听屏幕旋转，在全屏模式下动态调整旋转
-            window.addEventListener('resize', function() {
-                if (returnVideoBox.classList.contains('fullscreen-mode')) {
-                    if (window.innerHeight > window.innerWidth) {
-                        returnVideo.classList.add('rotate-portrait');
-                    } else {
-                        returnVideo.classList.remove('rotate-portrait');
+            const styleCheck = document.createElement('style');
+            styleCheck.textContent = `
+                .button-grid .nav-btn {
+                    min-height: 220px;
+                    justify-content: center;
+                }
+                @media (max-width: 700px) {
+                    .button-grid .nav-btn {
+                        min-height: 190px;
                     }
                 }
-            });
-        }
-        
-        function setReturnConnectionStatus(connected, msg) {
-            const dot = document.getElementById('returnStatusDot');
-            const text = document.getElementById('returnStatusText');
-            if (dot) dot.className = `status-dot ${connected ? 'connected' : ''}`;
-            if (text) text.textContent = msg;
-        }
-        
-        function showReturnCallStatus(className, text) {
-            const div = document.getElementById('returnCallStatus');
-            const span = document.getElementById('returnCallStatusText');
-            if (!div || !span) return;
-            div.className = `call-status ${className}`;
-            div.style.display = 'block';
-            span.innerHTML = text;
-            if (className !== 'connecting') setTimeout(() => { div.style.display = 'none'; }, 5000);
-        }
-        
-        function updateReturnOnlineCount() {
-            const count = pageManager.returnPageState.remoteUsers.size + (pageManager.returnPageState.isInCall ? 1 : 0);
-            document.getElementById('returnOnlineCount').textContent = count;
-            document.getElementById('returnOnlineCount2').textContent = count;
-        }
-        
-        function updateReturnPlaceholder() {
-            const placeholder = document.getElementById('returnPlaceholder');
-            if (!pageManager.returnPageState.isReceiving) {
-                placeholder.style.display = 'flex';
-                placeholder.innerHTML = '<i class="fas fa-eye-slash" style="margin-right: 8px;"></i> 接收已关闭';
-            } else if (pageManager.returnPageState.subscribedVideoUsers.size === 0) {
-                placeholder.style.display = 'flex';
-                placeholder.innerHTML = '等待远端视频...';
-            } else {
-                placeholder.style.display = 'none';
-            }
-        }
-        
-        function setReturnAudioVolume(volume) {
-            volume = Math.min(100, Math.max(0, volume));
-            for (let audioTrack of pageManager.returnPageState.subscribedAudioUsers.values()) {
-                audioTrack.setVolume(volume);
-            }
-        }
-        
-        async function initReturnClient() {
-            if (pageManager.returnPageState.rtcClient) return;
-            const rtcClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
-            pageManager.returnPageState.rtcClient = rtcClient;
-            
-            rtcClient.on('user-published', async (user, mediaType) => {
-                if (!pageManager.returnPageState.remoteUsers.has(user.uid)) {
-                    pageManager.returnPageState.remoteUsers.set(user.uid, user);
-                    updateReturnOnlineCount();
+                .iframe-container iframe {
+                    background: #0b1217;
                 }
-                if (pageManager.returnPageState.isReceiving) {
-                    await subscribeReturnUserMedia(user, mediaType);
-                }
-            });
-            
-            rtcClient.on('user-unpublished', (user, mediaType) => {
-                if (mediaType === 'video') {
-                    if (pageManager.returnPageState.subscribedVideoUsers.has(user.uid)) {
-                        pageManager.returnPageState.subscribedVideoUsers.delete(user.uid);
-                        if (pageManager.returnPageState.subscribedVideoUsers.size === 0) {
-                            document.getElementById('returnVideo').srcObject = null;
-                        }
-                    }
-                } else if (mediaType === 'audio') {
-                    pageManager.returnPageState.subscribedAudioUsers.delete(user.uid);
-                }
-                updateReturnPlaceholder();
-            });
-            
-            rtcClient.on('user-left', (user) => {
-                pageManager.returnPageState.remoteUsers.delete(user.uid);
-                pageManager.returnPageState.subscribedVideoUsers.delete(user.uid);
-                pageManager.returnPageState.subscribedAudioUsers.delete(user.uid);
-                if (pageManager.returnPageState.subscribedVideoUsers.size === 0) {
-                    document.getElementById('returnVideo').srcObject = null;
-                }
-                updateReturnOnlineCount();
-                updateReturnPlaceholder();
-            });
-        }
-        
-        async function subscribeReturnUserMedia(user, mediaType) {
-            try {
-                await pageManager.returnPageState.rtcClient.subscribe(user, mediaType);
-                if (mediaType === 'video') {
-                    const videoTrack = user.videoTrack;
-                    if (videoTrack) {
-                        pageManager.returnPageState.subscribedVideoUsers.set(user.uid, videoTrack);
-                        videoTrack.play('returnVideo');
-                        updateReturnPlaceholder();
-                    }
-                } else if (mediaType === 'audio') {
-                    const audioTrack = user.audioTrack;
-                    if (audioTrack) {
-                        pageManager.returnPageState.subscribedAudioUsers.set(user.uid, audioTrack);
-                        audioTrack.setVolume(parseInt(document.getElementById('returnVolumeSlider').value));
-                        audioTrack.play().catch(e => {});
-                    }
-                }
-            } catch (e) {
-                console.error(`订阅用户 ${user.uid} ${mediaType} 失败`, e);
-            }
-        }
-        
-        async function unsubscribeAllReturnRemote() {
-            const promises = [];
-            for (let [uid, user] of pageManager.returnPageState.remoteUsers.entries()) {
-                promises.push(pageManager.returnPageState.rtcClient.unsubscribe(user));
-            }
-            await Promise.all(promises);
-            pageManager.returnPageState.subscribedVideoUsers.clear();
-            pageManager.returnPageState.subscribedAudioUsers.clear();
-            document.getElementById('returnVideo').srcObject = null;
-            updateReturnPlaceholder();
-        }
-        
-        async function joinReturnChannel(channelName, token = null) {
-            if (pageManager.returnPageState.isInCall) return;
-            try {
-                setReturnConnectionStatus(true, '连接中...');
-                document.getElementById('returnCallToggle').disabled = true;
-                showReturnCallStatus('connecting', '正在加入频道...');
-                
-                await initReturnClient();
-                pageManager.returnPageState.isReceiving = true;
-                const uid = await pageManager.returnPageState.rtcClient.join(APP_ID, channelName, token || null);
-                pageManager.returnPageState.isInCall = true;
-                pageManager.returnPageState.currentUid = uid;
-                pageManager.returnPageState.currentChannelName = channelName;
-                
-                const callBtn = document.getElementById('returnCallToggle');
-                callBtn.classList.add('in-call');
-                document.getElementById('returnCallText').textContent = '退出频道';
-                callBtn.querySelector('i').className = 'fas fa-phone-slash';
-                
-                document.getElementById('returnRemoteToggle').disabled = false;
-                document.getElementById('returnRemoteText').textContent = '关闭接收';
-                document.getElementById('returnRemoteToggle').classList.remove('remote-off');
-                
-                updateReturnOnlineCount();
-                updateReturnPlaceholder();
-                
-                showReturnCallStatus('connected', `已加入频道 ${channelName}，UID ${uid}`);
-                setReturnConnectionStatus(true, '已连接');
-                document.getElementById('returnCallToggle').disabled = false;
-            } catch (err) {
-                console.error('加入返送失败', err);
-                showReturnCallStatus('disconnected', `加入失败: ${err.message}`);
-                setReturnConnectionStatus(false, '连接失败');
-                document.getElementById('returnCallToggle').disabled = false;
-                if (pageManager.returnPageState.rtcClient) {
-                    try { await pageManager.returnPageState.rtcClient.leave(); } catch(e) {}
-                    pageManager.returnPageState.rtcClient = null;
-                }
-                pageManager.returnPageState.isReceiving = true;
-                pageManager.returnPageState.isInCall = false;
-            }
-        }
-        
-        async function leaveReturnChannel() {
-            try {
-                showReturnCallStatus('connecting', '正在离开频道...');
-                document.getElementById('returnCallToggle').disabled = true;
-                document.getElementById('returnRemoteToggle').disabled = true;
-                
-                if (pageManager.returnPageState.rtcClient) {
-                    await pageManager.returnPageState.rtcClient.leave();
-                    pageManager.returnPageState.rtcClient = null;
-                }
-                pageManager.returnPageState.remoteUsers.clear();
-                pageManager.returnPageState.subscribedVideoUsers.clear();
-                pageManager.returnPageState.subscribedAudioUsers.clear();
-                document.getElementById('returnVideo').srcObject = null;
-                document.getElementById('returnPlaceholder').style.display = 'flex';
-                document.getElementById('returnPlaceholder').innerHTML = '接收已关闭';
-                
-                pageManager.returnPageState.isInCall = false;
-                pageManager.returnPageState.isReceiving = true;
-                
-                const callBtn = document.getElementById('returnCallToggle');
-                callBtn.classList.remove('in-call');
-                document.getElementById('returnCallText').textContent = '加入频道';
-                callBtn.querySelector('i').className = 'fas fa-phone-alt';
-                
-                updateReturnOnlineCount();
-                showReturnCallStatus('disconnected', '已离开频道');
-                setReturnConnectionStatus(true, '已断开');
-                document.getElementById('returnCallToggle').disabled = false;
-            } catch (err) {
-                console.error('离开返送失败', err);
-                document.getElementById('returnCallToggle').disabled = false;
-            }
-        }
-        
-        function toggleReturnCall() {
-            if (pageManager.returnPageState.isInCall) {
-                leaveReturnChannel();
-            } else {
-                const channel = document.getElementById('returnChannelName').value.trim();
-                const token = document.getElementById('returnToken').value.trim();
-                if (!channel) { alert('频道名称不能为空'); return; }
-                joinReturnChannel(channel, token || null);
-            }
-        }
-        
-        async function toggleReturnRemote() {
-            if (!pageManager.returnPageState.isInCall) return;
-            pageManager.returnPageState.isReceiving = !pageManager.returnPageState.isReceiving;
-            const remoteTextSpan = document.getElementById('returnRemoteText');
-            const remoteBtn = document.getElementById('returnRemoteToggle');
-            if (pageManager.returnPageState.isReceiving) {
-                remoteTextSpan.textContent = '关闭接收';
-                remoteBtn.classList.remove('remote-off');
-                for (let [uid, user] of pageManager.returnPageState.remoteUsers.entries()) {
-                    if (user.hasVideo) await subscribeReturnUserMedia(user, 'video');
-                    if (user.hasAudio) await subscribeReturnUserMedia(user, 'audio');
-                }
-            } else {
-                remoteTextSpan.textContent = '开启接收';
-                remoteBtn.classList.add('remote-off');
-                await unsubscribeAllReturnRemote();
-            }
-            updateReturnPlaceholder();
-        }
-        
-        function updateReturnPageDisplay() {
-            const callBtn = document.getElementById('returnCallToggle');
-            const remoteBtn = document.getElementById('returnRemoteToggle');
-            const callText = document.getElementById('returnCallText');
-            const remoteText = document.getElementById('returnRemoteText');
-            if (pageManager.returnPageState.isInCall) {
-                callBtn.classList.add('in-call');
-                callText.textContent = '退出频道';
-                callBtn.querySelector('i').className = 'fas fa-phone-slash';
-                remoteBtn.disabled = false;
-            } else {
-                callBtn.classList.remove('in-call');
-                callText.textContent = '加入频道';
-                callBtn.querySelector('i').className = 'fas fa-phone-alt';
-                remoteBtn.disabled = true;
-            }
-            if (pageManager.returnPageState.isReceiving) {
-                remoteText.textContent = '关闭接收';
-                remoteBtn.classList.remove('remote-off');
-            } else {
-                remoteText.textContent = '开启接收';
-                remoteBtn.classList.add('remote-off');
-            }
-            updateReturnOnlineCount();
-            updateReturnPlaceholder();
-        }
-        
-        // 页面关闭前清理
-        window.addEventListener('beforeunload', function(e) {
-            let inCall = false; let message = '';
-            if (pageManager.callPageState && pageManager.callPageState.isInCall) { inCall = true; message = '您正在通话中，确定要离开吗？'; }
-            if (pageManager.returnPageState && pageManager.returnPageState.isInCall) { inCall = true; message = '您正在视频返送中，确定要离开吗？'; }
-            if (inCall) { e.returnValue = message; return message; }
-        });
-        
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                if (pageManager.callPageState && pageManager.callPageState.isInCall) console.log('页面进入后台，通话保持中...');
-                if (pageManager.returnPageState && pageManager.returnPageState.isInCall) console.log('页面进入后台，视频返送保持中...');
-            } else {
-                if (pageManager.callPageState && pageManager.callPageState.isInCall) console.log('页面回到前台');
-                if (pageManager.returnPageState && pageManager.returnPageState.isInCall) console.log('页面回到前台');
-            }
-        });
-        
-        window.toggleCall = toggleCall;
-        window.toggleMicrophone = toggleMicrophone;
+            `;
+            document.head.appendChild(styleCheck);
+        })();
     </script>
 </body>
 </html>
