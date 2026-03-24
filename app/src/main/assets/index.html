@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>演播智联 · 融媒体控制中心</title>
+    <title>演播智联 · 演播联控中心</title>
     <style>
         * {
             margin: 0;
@@ -55,19 +55,21 @@
         .connection-group {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 60px;
-            padding: 15px 20px;
+            padding: 15px 25px;
             margin-bottom: 40px;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: flex-end;
+            align-items: center;
             gap: 20px;
         }
 
         .input-field {
             flex: 1;
-            min-width: 200px;
+            min-width: 280px;
+            max-width: 480px;
             text-align: left;
+            margin: 0 auto;
         }
 
         .input-field label {
@@ -100,13 +102,6 @@
 
         .input-field input::placeholder {
             color: rgba(255, 255, 255, 0.6);
-        }
-
-        .port-hint {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
-            margin-top: 5px;
-            margin-left: 12px;
         }
 
         .button-grid {
@@ -311,6 +306,11 @@
                 align-items: stretch;
                 border-radius: 32px;
                 gap: 12px;
+                padding: 15px 20px;
+            }
+            .input-field {
+                min-width: auto;
+                width: 100%;
             }
             .iframe-header {
                 padding: 10px 16px;
@@ -347,18 +347,12 @@
 
     <div class="home-card" id="homeCard">
         <h1>🎙️ 演播智联</h1>
-        <div class="subtitle">自建媒体辅助控制中心</div>
+        <div class="subtitle">演播联控中心</div>
 
         <div class="connection-group">
             <div class="input-field">
                 <label>🌐 服务器地址</label>
                 <input type="text" id="serverAddress" placeholder="例如: 192.168.1.100 或 studio.example.com" autocomplete="off">
-                
-            </div>
-            <div class="input-field">
-                <label>🔌 服务端口</label>
-                <input type="text" id="serverPort" placeholder="8082" value="8082" autocomplete="off">
-               
             </div>
         </div>
 
@@ -408,7 +402,6 @@
     <script>
         (function() {
             const serverAddressInput = document.getElementById('serverAddress');
-            const serverPortInput = document.getElementById('serverPort');
             const homeCard = document.getElementById('homeCard');
             const iframeOverlay = document.getElementById('iframeOverlay');
             const dynamicIframe = document.getElementById('dynamicIframe');
@@ -427,6 +420,7 @@
                 }, 4000);
             }
 
+            // 清理地址：去掉协议和末尾斜杠
             function sanitizeAddress(raw) {
                 let clean = raw.trim();
                 if (!clean) return '';
@@ -435,15 +429,7 @@
                 return clean;
             }
 
-            function getValidPort(rawPort) {
-                let portStr = rawPort.trim();
-                if (portStr === "") return 8082;
-                let portNum = parseInt(portStr, 10);
-                if (isNaN(portNum) || portNum <= 0 || portNum > 65535) return 8082;
-                return portNum;
-            }
-
-            // 判断主机名是否为有效地址（过滤微信等环境中的特殊字符串）
+            // 判断主机名是否有效（避免微信等特殊环境自动填入错误值）
             function isValidHostname(hostname) {
                 if (!hostname) return false;
                 const invalidPatterns = [
@@ -458,48 +444,38 @@
                 return /^[a-zA-Z0-9.-]+$/.test(hostname) && hostname.length > 0;
             }
 
-            // 强制使用 HTTPS 协议
+            // 固定使用 HTTPS 协议 + 默认 8082 端口
             function buildTargetUrl(page) {
                 let addressRaw = serverAddressInput.value;
-                let portRaw = serverPortInput.value;
                 let address = sanitizeAddress(addressRaw);
-                let port = getValidPort(portRaw);
                 
+                // 未填写地址时的后备逻辑：使用当前页面的主机名（若有效），否则使用 127.0.0.1
                 if (address === "") {
-                    address = window.location.hostname;
-                    if (!isValidHostname(address)) address = '';
-                    if (!address) address = '127.0.0.1';
+                    let currentHost = window.location.hostname;
+                    if (isValidHostname(currentHost)) {
+                        address = currentHost;
+                    } else {
+                        address = '127.0.0.1';
+                    }
                 }
                 
                 const protocol = 'https:';
+                const port = 8082;   // 固定端口，不再允许用户修改
                 let url = `${protocol}//${address}:${port}/${page}`;
                 return url;
             }
 
             function openModule(page, moduleDisplayName) {
+                // 基础地址校验：如果用户完全没填，给出温和提示（不阻断，但会使用后备地址）
                 let addrRaw = serverAddressInput.value.trim();
                 if (addrRaw === "") {
                     showErrorMsg("请填写服务器地址 (例如 192.168.1.100)");
-                }
-                let portVal = serverPortInput.value.trim();
-                if (portVal === "") serverPortInput.value = "8082";
-                else {
-                    const portNum = parseInt(portVal, 10);
-                    if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
-                        showErrorMsg("端口号无效，已重置为8082");
-                        serverPortInput.value = "8082";
-                    }
-                }
-                if (!serverAddressInput.value.trim()) {
-                    let defaultHost = window.location.hostname;
-                    if (isValidHostname(defaultHost)) {
-                        serverAddressInput.value = defaultHost;
-                    }
+                    // 仍然继续尝试，使用后备地址或当前hostname
                 }
                 
                 const targetUrl = buildTargetUrl(page);
                 if (!targetUrl || targetUrl.indexOf('//') === -1) {
-                    showErrorMsg("生成的URL无效，请确认服务器地址和端口");
+                    showErrorMsg("生成的URL无效，请确认服务器地址格式");
                     return;
                 }
                 
@@ -515,7 +491,7 @@
                 window.loadTimeout = setTimeout(() => {
                     if (iframeLoading && iframeLoading.style.display === 'flex') {
                         iframeLoading.style.display = 'none';
-                        showErrorMsg("连接超时，请检查服务器地址、端口或服务状态");
+                        showErrorMsg("连接超时，请检查服务器地址、服务状态或网络配置");
                     }
                 }, 10000);
                 
@@ -527,7 +503,7 @@
                 dynamicIframe.onerror = () => {
                     clearTimeout(window.loadTimeout);
                     iframeLoading.style.display = 'none';
-                    showErrorMsg(`无法加载模块: ${targetUrl} ，请验证服务器是否运行且端口可访问`);
+                    showErrorMsg(`无法加载模块: ${targetUrl} ，请验证服务器是否运行且端口8082可访问`);
                 };
                 
                 dynamicIframe.src = targetUrl;
@@ -564,20 +540,19 @@
                 }
             });
             
+            // 初始化服务器地址：只在当前主机名有效时自动填入，否则留空（让用户手动输入）
             function initDefaultConnection() {
-                if (!serverPortInput.value) serverPortInput.value = "8082";
                 let currentHost = window.location.hostname;
-                // 只有在主机名有效时才自动填入
                 if (isValidHostname(currentHost)) {
                     serverAddressInput.value = currentHost;
                 } else {
                     serverAddressInput.placeholder = "例如: 192.168.1.100 或 studio.com";
-                    // 确保输入框为空，不残留任何无关字符串
                     serverAddressInput.value = "";
                 }
             }
             initDefaultConnection();
-            
+
+            // 微调按钮高度，保证视觉统一
             const styleCheck = document.createElement('style');
             styleCheck.textContent = `
                 .button-grid .nav-btn {
