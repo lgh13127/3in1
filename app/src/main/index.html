@@ -70,6 +70,7 @@
             max-width: 480px;
             text-align: left;
             margin: 0 auto;
+            position: relative;
         }
 
         .input-field label {
@@ -255,6 +256,29 @@
             background: #111;
         }
 
+        /* 多iframe容器：每个模块的iframe独立显示/隐藏 */
+        .iframe-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.2s ease;
+        }
+        .iframe-wrapper.active {
+            visibility: visible;
+            opacity: 1;
+            z-index: 1;
+        }
+        .iframe-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #111;
+        }
+
         .iframe-loading {
             position: absolute;
             top: 50%;
@@ -352,22 +376,23 @@
         <div class="connection-group">
             <div class="input-field">
                 <label>🌐 服务器地址</label>
+                <!-- 移除 datalist，只保留输入框，由最近成功地址自动填充 -->
                 <input type="text" id="serverAddress" placeholder="例如: 192.168.1.100 或 studio.example.com" autocomplete="off">
             </div>
         </div>
 
         <div class="button-grid">
-            <div class="nav-btn btn-tally" data-page="monitor.html" data-module="TALLY 监视器">
+            <div class="nav-btn btn-tally" data-page="monitor.html" data-module="TALLY 监视器" data-key="tally">
                 <span class="icon">🔴</span>
                 <span>TSL UMD V5<br>TALLY</span>
                 <small>设备TALLY实时监控</small>
             </div>
-            <div class="nav-btn btn-agora" data-page="mobile.html" data-module="INTERCOM 通话">
+            <div class="nav-btn btn-agora" data-page="mobile.html" data-module="INTERCOM 通话" data-key="intercom">
                 <span class="icon">🎤</span>
                 <span>INTERCOM<br>通话</span>
                 <small>音频通话</small>
             </div>
-            <div class="nav-btn btn-video" data-page="return.html" data-module="视频返送">
+            <div class="nav-btn btn-video" data-page="return.html" data-module="视频返送" data-key="pgm">
                 <span class="icon">📹</span>
                 <span>PGM返送</span>
                 <small>音视频返送</small>
@@ -393,7 +418,8 @@
                 <div class="spinner"></div>
                 <span>正在连接演播服务器...</span>
             </div>
-            <iframe id="dynamicIframe" title="演播模块" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-presentation allow-downloads allow-popups-to-escape-sandbox allow-microphone allow-camera" allow="camera; microphone; autoplay; display-capture; fullscreen"></iframe>
+            <!-- 动态创建的 iframe 包装器会放在这里 -->
+            <div id="iframeWrappers"></div>
         </div>
     </div>
 
@@ -404,18 +430,59 @@
             const serverAddressInput = document.getElementById('serverAddress');
             const homeCard = document.getElementById('homeCard');
             const iframeOverlay = document.getElementById('iframeOverlay');
-            const dynamicIframe = document.getElementById('dynamicIframe');
             const iframeLoading = document.getElementById('iframeLoading');
             const closeIframeBtn = document.getElementById('closeIframeBtn');
             const currentModuleTitleSpan = document.getElementById('currentModuleTitle');
+            const iframeWrappersDiv = document.getElementById('iframeWrappers');
             
-            let toastTimeout = null;
+            // ---------- 地址记忆功能：只保留最近一次成功连接的地址 ----------
+            const STORAGE_KEY_LAST_SUCCESS = 'last_success_address';
+            
+            // 获取最近一次成功连接的地址
+            function getLastSuccessAddress() {
+                try {
+                    return localStorage.getItem(STORAGE_KEY_LAST_SUCCESS) || '';
+                } catch(e) {
+                    console.warn(e);
+                    return '';
+                }
+            }
+            
+            // 保存最近一次成功连接的地址
+            function saveLastSuccessAddress(address) {
+                if (!address || typeof address !== 'string') return;
+                const trimmed = address.trim();
+                if (trimmed === '') return;
+                try {
+                    localStorage.setItem(STORAGE_KEY_LAST_SUCCESS, trimmed);
+                } catch(e) { console.warn(e); }
+            }
+            
+            // 初始化输入框：优先显示最近成功地址，否则显示当前hostname（如果有）
+            function initServerAddressInput() {
+                const lastAddr = getLastSuccessAddress();
+                if (lastAddr) {
+                    serverAddressInput.value = lastAddr;
+                    serverAddressInput.placeholder = "服务器地址";
+                } else {
+                    // 尝试使用当前页面的主机名作为默认提示，但不自动填充（避免无效地址）
+                    let currentHost = window.location.hostname;
+                    if (currentHost && !['localhost', '127.0.0.1', '0.0.0.0', '::1'].includes(currentHost)) {
+                        serverAddressInput.placeholder = `例如: ${currentHost} 或 192.168.1.100`;
+                    } else {
+                        serverAddressInput.placeholder = "例如: 192.168.1.100 或 studio.example.com";
+                    }
+                    // 不清空已有值
+                }
+            }
+            
+            // ---------- 其余原有逻辑（适配单地址记忆）----------
             function showErrorMsg(msg) {
                 const toast = document.getElementById('errorToast');
                 toast.textContent = msg;
                 toast.classList.add('show');
-                if (toastTimeout) clearTimeout(toastTimeout);
-                toastTimeout = setTimeout(() => {
+                if (window.toastTimeout) clearTimeout(window.toastTimeout);
+                window.toastTimeout = setTimeout(() => {
                     toast.classList.remove('show');
                 }, 4000);
             }
@@ -429,7 +496,7 @@
                 return clean;
             }
 
-            // 判断主机名是否有效（避免微信等特殊环境自动填入错误值）
+            // 判断主机名是否有效
             function isValidHostname(hostname) {
                 if (!hostname) return false;
                 const invalidPatterns = [
@@ -440,16 +507,13 @@
                 for (let pattern of invalidPatterns) {
                     if (lowerHost.includes(pattern)) return false;
                 }
-                // 简单IP或域名格式：包含点或字母，且长度合理
                 return /^[a-zA-Z0-9.-]+$/.test(hostname) && hostname.length > 0;
             }
 
-            // 固定使用 HTTPS 协议 + 默认 8082 端口
+            // 构建目标URL（固定端口8082，https）
             function buildTargetUrl(page) {
                 let addressRaw = serverAddressInput.value;
                 let address = sanitizeAddress(addressRaw);
-                
-                // 未填写地址时的后备逻辑：使用当前页面的主机名（若有效），否则使用 127.0.0.1
                 if (address === "") {
                     let currentHost = window.location.hostname;
                     if (isValidHostname(currentHost)) {
@@ -458,101 +522,212 @@
                         address = '127.0.0.1';
                     }
                 }
-                
                 const protocol = 'https:';
-                const port = 8082;   // 固定端口，不再允许用户修改
-                let url = `${protocol}//${address}:${port}/${page}`;
-                return url;
+                const port = 8082;
+                return `${protocol}//${address}:${port}/${page}`;
             }
 
-            function openModule(page, moduleDisplayName) {
-                // 基础地址校验：如果用户完全没填，给出温和提示（不阻断，但会使用后备地址）
-                let addrRaw = serverAddressInput.value.trim();
-                if (addrRaw === "") {
-                    showErrorMsg("请填写服务器地址 (例如 192.168.1.100)");
-                    // 仍然继续尝试，使用后备地址或当前hostname
+            // 存储每个模块的包装器元素和加载状态
+            const modules = {
+                tally: { key: 'tally', page: 'monitor.html', name: 'TALLY 监视器', wrapper: null, iframe: null, loaded: false, url: null },
+                intercom: { key: 'intercom', page: 'mobile.html', name: 'INTERCOM 通话', wrapper: null, iframe: null, loaded: false, url: null },
+                pgm: { key: 'pgm', page: 'return.html', name: '视频返送', wrapper: null, iframe: null, loaded: false, url: null }
+            };
+            
+            let currentActiveKey = null;   // 当前显示的模块key
+            let loadTimeout = null;
+            
+            // 创建模块的iframe包装器（如果尚未创建）
+            function ensureModuleWrapper(module) {
+                if (module.wrapper) return module.wrapper;
+                
+                const wrapper = document.createElement('div');
+                wrapper.className = 'iframe-wrapper';
+                wrapper.setAttribute('data-module-key', module.key);
+                const iframe = document.createElement('iframe');
+                iframe.title = module.name;
+                iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-presentation allow-downloads allow-popups-to-escape-sandbox allow-microphone allow-camera');
+                iframe.setAttribute('allow', 'camera; microphone; autoplay; display-capture; fullscreen');
+                wrapper.appendChild(iframe);
+                iframeWrappersDiv.appendChild(wrapper);
+                
+                module.wrapper = wrapper;
+                module.iframe = iframe;
+                return wrapper;
+            }
+            
+            // 加载指定模块（创建iframe并设置src，如果尚未加载过）
+            function loadModule(moduleKey, forceReload = false) {
+                const module = modules[moduleKey];
+                if (!module) {
+                    showErrorMsg(`未知模块: ${moduleKey}`);
+                    return false;
                 }
                 
-                const targetUrl = buildTargetUrl(page);
-                if (!targetUrl || targetUrl.indexOf('//') === -1) {
-                    showErrorMsg("生成的URL无效，请确认服务器地址格式");
+                // 确保包装器存在
+                ensureModuleWrapper(module);
+                
+                // 如果需要强制重载，则清空loaded标志并重新设置src
+                if (forceReload) {
+                    module.loaded = false;
+                    if (module.iframe) {
+                        module.iframe.src = 'about:blank';
+                    }
+                }
+                
+                // 如果尚未加载，则构建URL并加载
+                if (!module.loaded) {
+                    const targetUrl = buildTargetUrl(module.page);
+                    module.url = targetUrl;
+                    // 显示全局loading（因为第一次加载需要时间）
+                    iframeLoading.style.display = 'flex';
+                    if (loadTimeout) clearTimeout(loadTimeout);
+                    loadTimeout = setTimeout(() => {
+                        if (iframeLoading && iframeLoading.style.display === 'flex') {
+                            iframeLoading.style.display = 'none';
+                            showErrorMsg(`模块 ${module.name} 加载超时，请检查网络或服务器地址`);
+                        }
+                    }, 10000);
+                    
+                    module.iframe.onload = () => {
+                        if (loadTimeout) clearTimeout(loadTimeout);
+                        iframeLoading.style.display = 'none';
+                        module.loaded = true;
+                        
+                        // ---------- 关键修改：模块加载成功，将当前使用的地址保存为最近成功地址 ----------
+                        const currentAddr = serverAddressInput.value;
+                        if (currentAddr && currentAddr.trim() !== '') {
+                            saveLastSuccessAddress(currentAddr.trim());
+                        } else {
+                            // 如果输入框为空，但使用了默认地址（例如当前hostname），也保存这个有效的默认地址
+                            const usedAddr = sanitizeAddress(serverAddressInput.value);
+                            if (usedAddr) {
+                                saveLastSuccessAddress(usedAddr);
+                            } else {
+                                let fallbackAddr = window.location.hostname;
+                                if (isValidHostname(fallbackAddr)) {
+                                    saveLastSuccessAddress(fallbackAddr);
+                                }
+                            }
+                        }
+                        
+                        // 加载完成后，如果当前激活的模块就是它，确保显示
+                        if (currentActiveKey === moduleKey) {
+                            // 已经显示，无需额外操作
+                        }
+                    };
+                    module.iframe.onerror = () => {
+                        if (loadTimeout) clearTimeout(loadTimeout);
+                        iframeLoading.style.display = 'none';
+                        showErrorMsg(`无法加载模块 ${module.name}: ${targetUrl}\n请检查服务器地址是否正确，确保目标服务已开启`);
+                        module.loaded = false;
+                        // 加载失败不保存地址（不覆盖之前的成功地址）
+                    };
+                    module.iframe.src = targetUrl;
+                }
+                return true;
+            }
+            
+            // 切换到指定模块（显示对应的wrapper，隐藏其他）
+            function switchToModule(moduleKey) {
+                if (currentActiveKey === moduleKey) {
+                    // 已经是当前模块，无需切换，但确保overlay可见
+                    if (!iframeOverlay.classList.contains('active')) {
+                        homeCard.style.display = 'none';
+                        iframeOverlay.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
                     return;
                 }
                 
-                const titleText = moduleDisplayName || page;
-                currentModuleTitleSpan.innerHTML = `<span>${titleText}</span>`;
+                // 先尝试加载模块（如果未加载过）
+                loadModule(moduleKey);
                 
+                // 更新标题
+                const module = modules[moduleKey];
+                if (module) {
+                    currentModuleTitleSpan.innerHTML = `<span>${module.name}</span>`;
+                }
+                
+                // 隐藏所有wrapper，显示当前选中的
+                for (const key in modules) {
+                    const m = modules[key];
+                    if (m.wrapper) {
+                        m.wrapper.classList.remove('active');
+                    }
+                }
+                const activeWrapper = modules[moduleKey].wrapper;
+                if (activeWrapper) {
+                    activeWrapper.classList.add('active');
+                }
+                
+                currentActiveKey = moduleKey;
+                
+                // 确保overlay显示
                 homeCard.style.display = 'none';
                 iframeOverlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                iframeLoading.style.display = 'flex';
                 
-                if (window.loadTimeout) clearTimeout(window.loadTimeout);
-                window.loadTimeout = setTimeout(() => {
-                    if (iframeLoading && iframeLoading.style.display === 'flex') {
-                        iframeLoading.style.display = 'none';
-                        showErrorMsg("连接超时，请检查服务器地址、服务状态或网络配置");
-                    }
-                }, 10000);
-                
-                dynamicIframe.onload = () => {
-                    clearTimeout(window.loadTimeout);
+                // 如果模块已经加载完成，确保loading隐藏
+                if (modules[moduleKey].loaded) {
                     iframeLoading.style.display = 'none';
-                };
-                
-                dynamicIframe.onerror = () => {
-                    clearTimeout(window.loadTimeout);
-                    iframeLoading.style.display = 'none';
-                    showErrorMsg(`无法加载模块: ${targetUrl} ，请验证服务器是否运行且端口8082可访问`);
-                };
-                
-                dynamicIframe.src = targetUrl;
+                } else {
+                    // 如果还没加载完成，loading可能已经在loadModule中显示，保持显示
+                }
             }
             
+            // 返回主页：隐藏overlay，不清空任何iframe，保留所有状态
+            function closeOverlay() {
+                if (iframeOverlay.classList.contains('active')) {
+                    iframeOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                    homeCard.style.display = 'block';
+                    iframeLoading.style.display = 'none';
+                    // 不清空iframe，保留所有模块状态
+                }
+            }
+            
+            // 模块按钮点击事件处理（不再预先保存地址，地址只在成功加载后保存）
+            function onModuleClick(moduleKey) {
+                // 检查地址是否为空，如果为空提示，但不阻止（可能使用默认地址）
+                const currentAddr = serverAddressInput.value;
+                if (!currentAddr || currentAddr.trim() === '') {
+                    showErrorMsg("服务器地址为空，将尝试使用默认地址");
+                }
+                switchToModule(moduleKey);
+            }
+            
+            // 绑定按钮事件
             const btns = document.querySelectorAll('.nav-btn');
             btns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const page = btn.getAttribute('data-page');
-                    const moduleName = btn.getAttribute('data-module') || '';
-                    if (!page) {
-                        showErrorMsg("页面配置缺失");
+                    const moduleKey = btn.getAttribute('data-key');
+                    if (!moduleKey) {
+                        showErrorMsg("按钮配置缺失 data-key");
                         return;
                     }
-                    openModule(page, moduleName);
+                    onModuleClick(moduleKey);
                 });
             });
             
-            closeIframeBtn.addEventListener('click', () => {
-                if (iframeOverlay.classList.contains('active')) {
-                    dynamicIframe.src = 'about:blank';
-                    iframeOverlay.classList.remove('active');
-                    iframeLoading.style.display = 'flex';
-                    document.body.style.overflow = '';
-                    if (window.loadTimeout) clearTimeout(window.loadTimeout);
-                    homeCard.style.display = 'block';
-                }
-            });
+            // 返回主页按钮
+            closeIframeBtn.addEventListener('click', closeOverlay);
             
+            // ESC 键返回主页
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && iframeOverlay.classList.contains('active')) {
-                    closeIframeBtn.click();
+                    closeOverlay();
                 }
             });
             
-            // 初始化服务器地址：只在当前主机名有效时自动填入，否则留空（让用户手动输入）
-            function initDefaultConnection() {
-                let currentHost = window.location.hostname;
-                if (isValidHostname(currentHost)) {
-                    serverAddressInput.value = currentHost;
-                } else {
-                    serverAddressInput.placeholder = "例如: 192.168.1.100 或 studio.com";
-                    serverAddressInput.value = "";
-                }
-            }
-            initDefaultConnection();
-
-            // 微调按钮高度，保证视觉统一
+            // 初始化：加载最近成功地址到输入框
+            initServerAddressInput();
+            
+            // 可选：监听输入框内容变化，但不需要额外保存（只有成功加载才保存）
+            // 如果用户手动清空并输入新地址，下次成功连接时会覆盖保存
+            
+            // 微调样式
             const styleCheck = document.createElement('style');
             styleCheck.textContent = `
                 .button-grid .nav-btn {
@@ -564,7 +739,25 @@
                         min-height: 190px;
                     }
                 }
-                .iframe-container iframe {
+                .iframe-wrapper {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    visibility: hidden;
+                    opacity: 0;
+                    transition: visibility 0s, opacity 0.2s ease;
+                }
+                .iframe-wrapper.active {
+                    visibility: visible;
+                    opacity: 1;
+                    z-index: 1;
+                }
+                .iframe-wrapper iframe {
+                    width: 100%;
+                    height: 100%;
+                    border: none;
                     background: #0b1217;
                 }
             `;
