@@ -36,7 +36,7 @@
         }
 
         h1 {
-            font-size: 3.2rem;
+            font-size: 3.8rem;
             font-weight: 600;
             color: white;
             letter-spacing: 1px;
@@ -45,7 +45,7 @@
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: rgba(255, 255, 255, 0.7);
             margin-bottom: 30px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -62,43 +62,48 @@
 
         .nav-btn {
             flex: 1 1 260px;
+            min-height: 220px;
             border: none;
             border-radius: 40px;
-            padding: 28px 20px;
+            padding: 20px 16px;
             font-size: 1.8rem;
             font-weight: 600;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            gap: 10px;
             transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
             border: 2px solid transparent;
             cursor: pointer;
             background: linear-gradient(145deg, #e74c3c, #c0392b);
             color: white;
+            position: relative;
         }
 
         .nav-btn .icon {
-            font-size: 3.8rem;
+            font-size: 4.2rem;
             filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+            line-height: 1;
         }
 
         .nav-btn span:not(.icon) {
-            font-size: 1.5rem;
+            font-size: 1.7rem;
             font-weight: 700;
         }
 
         .nav-btn small {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             opacity: 0.8;
             font-weight: normal;
-            margin-top: 4px;
+            margin-top: 2px;
+            display: block;
         }
 
         .nav-btn:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 28px 40px rgba(0, 0, 0, 0.45);
+            transform: translateY(-8px);
+            box-shadow: 0 25px 35px rgba(0, 0, 0, 0.45);
             border-color: #f1c40f;
             filter: brightness(1.02);
         }
@@ -111,78 +116,174 @@
             background: linear-gradient(145deg, #2ecc71, #27ae60);
         }
 
-        /* TALLY 卡片内部 */
+        /* TALLY 卡片内部调整 */
         .tally-card-content {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             width: 100%;
-            gap: 16px;
+            gap: 6px;
         }
 
         .tally-main-title {
-            font-size: 2.2rem;
+            font-size: 2.3rem;
             font-weight: 700;
             letter-spacing: 2px;
             color: white;
             text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            margin-bottom: 5px;
+            line-height: 1.2;
         }
 
-        .tally-sub-buttons {
-            display: flex;
-            width: 100%;
-            gap: 15px;
-            justify-content: center;
-        }
-
-        .tally-sub-btn {
-            flex: 1;
-            background: linear-gradient(145deg, #f5b042, #e67e22);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-radius: 30px;
-            padding: 18px 8px;
-            color: white;
-            font-weight: 800;
-            font-size: 1.4rem;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 215, 0, 0.2);
-            text-align: center;
-            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
-            letter-spacing: 1px;
-        }
-
-        .tally-sub-btn:hover {
-            background: linear-gradient(145deg, #f9ca24, #f39c12);
-            border-color: #f1c40f;
-            transform: scale(1.03);
-            box-shadow: 0 10px 25px rgba(241, 196, 15, 0.4), 0 0 0 3px rgba(255, 215, 0, 0.3);
-            color: white;
-        }
-
+        /* 大幅放大 Tally 图标 */
         .btn-tally .icon {
-            display: block;
+            font-size: 5.5rem;            /* 从 4.5rem 增大到 5.5rem */
         }
 
-        .btn-tally span:not(.icon):not(.tally-main-title):not(.tally-sub-btn) {
-            display: none;
+        /* TALLY 下方的副标题 */
+        .tally-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-weight: normal;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* 服务选择下拉框（右下角） */
+        .service-selector {
+            position: absolute;
+            bottom: 10px;
+            right: 12px;
+            background: rgba(20, 30, 40, 0.65);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 4px 8px 4px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: white;
+            cursor: default;
+            z-index: 2;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .service-selector:hover {
+            background: rgba(30, 45, 60, 0.8);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .service-selector label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: #e0e0e0;
+        }
+
+        .service-selector select {
+            background: transparent;
+            border: none;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 2px 20px 2px 4px;
+            border-radius: 30px;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 3px center;
+            background-size: 10px;
+        }
+
+        .service-selector select option {
+            background: #1a2a38;
+            color: white;
+            font-weight: 500;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border: none;
+            outline: none;
+        }
+
+        .service-selector select option:hover {
+            background: #2c3e50 !important;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 750px) {
+            .home-card {
+                padding: 30px 20px;
+            }
+            h1 {
+                font-size: 3rem;
+            }
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            .nav-btn {
+                padding: 16px 10px;
+                min-height: 200px;
+            }
+            .nav-btn .icon {
+                font-size: 3.5rem;
+            }
+            .btn-tally .icon {
+                font-size: 4.5rem;        /* 移动端也相应放大 */
+            }
+            .nav-btn span:not(.icon) {
+                font-size: 1.4rem;
+            }
+            .nav-btn small {
+                font-size: 0.8rem;
+            }
+            .tally-main-title {
+                font-size: 2rem;
+            }
+            .tally-subtitle {
+                font-size: 0.8rem;
+            }
+            .service-selector {
+                bottom: 8px;
+                right: 10px;
+                font-size: 0.75rem;
+                padding: 3px 6px 3px 10px;
+            }
+            .service-selector label {
+                font-size: 0.7rem;
+            }
+            .service-selector select {
+                font-size: 0.8rem;
+                padding: 2px 16px 2px 4px;
+            }
+            .service-selector select option {
+                font-size: 0.75rem;
+                padding: 3px 6px;
+            }
+            .iframe-header {
+                padding: 10px 16px;
+            }
         }
 
         .btn-tally {
-            cursor: default;
+            cursor: pointer;
         }
 
         .btn-tally:hover {
-            transform: none;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-            border-color: transparent;
+            transform: translateY(-8px);
+            box-shadow: 0 25px 35px rgba(0, 0, 0, 0.45);
+            border-color: #f1c40f;
         }
 
         .footer-note {
-            margin-top: 48px;
+            margin-top: 40px;
             color: rgba(255, 255, 255, 0.5);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             display: flex;
             justify-content: center;
             gap: 20px;
@@ -340,31 +441,6 @@
         .error-toast.show {
             opacity: 1;
         }
-
-        @media (max-width: 750px) {
-            .home-card {
-                padding: 30px 20px;
-            }
-            .nav-btn {
-                padding: 22px 12px;
-            }
-            .nav-btn .icon {
-                font-size: 3rem;
-            }
-            .nav-btn span:not(.icon) {
-                font-size: 1.3rem;
-            }
-            .tally-main-title {
-                font-size: 1.8rem;
-            }
-            .tally-sub-btn {
-                font-size: 1.1rem;
-                padding: 14px 4px;
-            }
-            .iframe-header {
-                padding: 10px 16px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -374,26 +450,31 @@
         <div class="subtitle">演播联控中心</div>
 
         <div class="button-grid">
-            <!-- TALLY 卡片：圆形按钮图标 🚥 -->
-            <div class="nav-btn btn-tally" id="tallyCard">
+            <!-- TALLY 卡片 -->
+            <div class="nav-btn btn-tally" id="tallyMainBtn">
                 <div class="tally-card-content">
                     <span class="icon">🚥</span>
-                    <div class="tally-main-title">TALLY</div>
-                    <div class="tally-sub-buttons">
-                        <button class="tally-sub-btn" data-tally-type="tsl">TSL</button>
-                        <button class="tally-sub-btn" data-tally-type="bmd">BMD</button>
-                    </div>
+                    <span class="tally-main-title">TALLY</span>
+                    <small class="tally-subtitle">BMD•TSL</small>
+                </div>
+                <div class="service-selector" onclick="event.stopPropagation()">
+                    <label for="serviceSelect">服务</label>
+                    <select id="serviceSelect">
+                        <option value="8082" selected>1</option>
+                        <option value="8083">2</option>
+                        <option value="8084">3</option>
+                    </select>
                 </div>
             </div>
 
             <!-- INTERCOM 通话 -->
             <div class="nav-btn btn-agora" data-key="intercom">
                 <span class="icon">🔊</span>
-                <span>INTERCOM<br>通话</span>
+                <span>INTERCOM</span>
                 <small>音频通话</small>
             </div>
 
-            <!-- PGM返送：显示器图标 🖼️ -->
+            <!-- PGM返送 -->
             <div class="nav-btn btn-video" data-key="pgm">
                 <span class="icon">🖼️</span>
                 <span>PGM返送</span>
@@ -429,17 +510,8 @@
 
     <script>
         (function() {
-            // ---------- 固定 URL 加载（所有模块统一使用）----------
             function openFixedUrlInIframe(url, title) {
                 const fixedKey = 'fixed_' + Date.now();
-                const module = {
-                    key: fixedKey,
-                    name: title,
-                    wrapper: null,
-                    iframe: null,
-                    loaded: false
-                };
-                
                 const wrapper = document.createElement('div');
                 wrapper.className = 'iframe-wrapper';
                 wrapper.setAttribute('data-module-key', fixedKey);
@@ -449,9 +521,6 @@
                 iframe.setAttribute('allow', 'camera; microphone; autoplay; display-capture; fullscreen');
                 wrapper.appendChild(iframe);
                 iframeWrappersDiv.appendChild(wrapper);
-                
-                module.wrapper = wrapper;
-                module.iframe = iframe;
                 
                 document.querySelectorAll('.iframe-wrapper').forEach(w => w.classList.remove('active'));
                 wrapper.classList.add('active');
@@ -470,7 +539,6 @@
                 iframe.onload = () => {
                     clearTimeout(loadTimeout);
                     iframeLoading.style.display = 'none';
-                    module.loaded = true;
                 };
                 iframe.onerror = () => {
                     clearTimeout(loadTimeout);
@@ -479,21 +547,20 @@
                 };
                 iframe.src = url;
                 
-                currentActiveKey = fixedKey;
                 homeCard.style.display = 'none';
                 iframeOverlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
 
-            let currentActiveKey = null;
             let loadTimeout = null;
-            
             const iframeOverlay = document.getElementById('iframeOverlay');
             const homeCard = document.getElementById('homeCard');
             const iframeLoading = document.getElementById('iframeLoading');
             const currentModuleTitleSpan = document.getElementById('currentModuleTitle');
             const iframeWrappersDiv = document.getElementById('iframeWrappers');
             const closeIframeBtn = document.getElementById('closeIframeBtn');
+            const serviceSelect = document.getElementById('serviceSelect');
+            const tallyMainBtn = document.getElementById('tallyMainBtn');
             
             function showErrorMsg(msg) {
                 const toast = document.getElementById('errorToast');
@@ -510,34 +577,25 @@
                 iframeLoading.style.display = 'none';
             }
 
-            // INTERCOM 通话
+            tallyMainBtn.addEventListener('click', () => {
+                const port = serviceSelect.value;
+                const url = `https://101.200.62.170:${port}/monitor.html`;
+                const serviceLabel = serviceSelect.options[serviceSelect.selectedIndex].text;
+                openFixedUrlInIframe(url, `TALLY 监视器 (服务${serviceLabel})`);
+            });
+
             document.querySelector('[data-key="intercom"]').addEventListener('click', () => {
                 openFixedUrlInIframe('https://101.200.62.170:8081/mobile.html', 'INTERCOM 通话');
             });
 
-            // PGM返送
             document.querySelector('[data-key="pgm"]').addEventListener('click', () => {
                 openFixedUrlInIframe('https://101.200.62.170:8081/return.html', 'PGM 返送');
-            });
-
-            // TALLY 卡片内的小按钮
-            document.querySelectorAll('.tally-sub-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const type = btn.getAttribute('data-tally-type');
-                    if (type === 'tsl') {
-                        openFixedUrlInIframe('https://101.200.62.170:8082/monitor.html', 'TSL TALLY 监视器');
-                    } else if (type === 'bmd') {
-                        openFixedUrlInIframe('https://101.200.62.170:8083/monitor.html', 'BMD TALLY 监视器');
-                    }
-                });
             });
 
             closeIframeBtn.addEventListener('click', closeOverlay);
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && iframeOverlay.classList.contains('active')) closeOverlay();
             });
-
         })();
     </script>
 </body>
