@@ -80,6 +80,7 @@
             background: linear-gradient(145deg, #e74c3c, #c0392b);
             color: white;
             position: relative;
+            overflow: visible;
         }
 
         .nav-btn .icon {
@@ -116,7 +117,6 @@
             background: linear-gradient(145deg, #2ecc71, #27ae60);
         }
 
-        /* TALLY 卡片内部调整 */
         .tally-card-content {
             display: flex;
             flex-direction: column;
@@ -135,12 +135,10 @@
             line-height: 1.2;
         }
 
-        /* 大幅放大 Tally 图标 */
         .btn-tally .icon {
-            font-size: 5.5rem;            /* 从 4.5rem 增大到 5.5rem */
+            font-size: 5.5rem;
         }
 
-        /* TALLY 下方的副标题 */
         .tally-subtitle {
             font-size: 0.9rem;
             opacity: 0.8;
@@ -149,73 +147,103 @@
             margin-top: 2px;
         }
 
-        /* 服务选择下拉框（右下角） */
+        /* ---------- 服务选择器（电脑端极小） ---------- */
         .service-selector {
             position: absolute;
             bottom: 10px;
             right: 12px;
-            background: rgba(20, 30, 40, 0.65);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 4px 8px 4px 12px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.8rem;
+            z-index: 10;
+        }
+
+        .service-selector-btn {
+            background: rgba(20, 30, 40, 0.7) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            border-radius: 10px !important;
+            padding: 0px 4px 0px 5px !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 1px !important;
+            font-size: 8px !important;
+            color: white !important;
+            cursor: pointer !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+            font-weight: 500 !important;
+            line-height: 1 !important;
+            height: 16px !important;
+            white-space: nowrap !important;
+        }
+
+        .service-selector-btn:hover {
+            background: rgba(30, 45, 60, 0.9) !important;
+            border-color: rgba(255, 255, 255, 0.35) !important;
+        }
+
+        .service-selector-btn span:first-child {
+            opacity: 0.9 !important;
+            letter-spacing: 0.2px !important;
+            color: #e0e0e0 !important;
+            font-size: 8px !important;
+        }
+
+        .service-selector-btn .selected-value {
+            font-weight: 700 !important;
+            margin: 0 1px !important;
+            font-size: 8px !important;
+        }
+
+        .service-selector-btn .arrow {
+            margin-left: 0px !important;
+            font-size: 7px !important;
+        }
+
+        .service-dropdown {
+            position: absolute;
+            bottom: calc(100% + 2px);
+            right: 0;
+            background: rgba(20, 30, 40, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            min-width: 55px;
+            display: none;
+            z-index: 20;
+        }
+
+        .service-dropdown.active {
+            display: block;
+        }
+
+        .service-option {
+            padding: 5px 8px;
             color: white;
-            cursor: default;
-            z-index: 2;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-            transition: all 0.2s ease;
-        }
-
-        .service-selector:hover {
-            background: rgba(30, 45, 60, 0.8);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .service-selector label {
-            font-size: 0.8rem;
-            opacity: 0.9;
+            font-size: 13px;
             font-weight: 500;
-            letter-spacing: 0.3px;
-            color: #e0e0e0;
+            cursor: pointer;
+            transition: background 0.15s;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .service-selector select {
-            background: transparent;
-            border: none;
+        .service-option:last-child {
+            border-bottom: none;
+        }
+
+        .service-option:hover {
+            background: #2c3e50;
+        }
+
+        .service-option.selected {
+            background: #3498db;
             color: white;
             font-weight: 700;
-            font-size: 0.9rem;
-            padding: 2px 20px 2px 4px;
-            border-radius: 30px;
-            outline: none;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 3px center;
-            background-size: 10px;
         }
 
-        .service-selector select option {
-            background: #1a2a38;
-            color: white;
-            font-weight: 500;
-            font-size: 0.8rem;
-            padding: 4px 8px;
-            border: none;
-            outline: none;
-        }
-
-        .service-selector select option:hover {
-            background: #2c3e50 !important;
-        }
-
-        /* 移动端适配 */
+        /* ---------- 移动端：选择框放大 ---------- */
         @media (max-width: 750px) {
             .home-card {
                 padding: 30px 20px;
@@ -234,7 +262,7 @@
                 font-size: 3.5rem;
             }
             .btn-tally .icon {
-                font-size: 4.5rem;        /* 移动端也相应放大 */
+                font-size: 4.5rem;
             }
             .nav-btn span:not(.icon) {
                 font-size: 1.4rem;
@@ -251,22 +279,26 @@
             .service-selector {
                 bottom: 8px;
                 right: 10px;
-                font-size: 0.75rem;
-                padding: 3px 6px 3px 10px;
             }
-            .service-selector label {
-                font-size: 0.7rem;
+            /* 手机端选择框明显放大 */
+            .service-selector-btn {
+                font-size: 11px !important;
+                height: 22px !important;
+                padding: 2px 6px 2px 8px !important;
+                border-radius: 12px !important;
             }
-            .service-selector select {
-                font-size: 0.8rem;
-                padding: 2px 16px 2px 4px;
+            .service-selector-btn span:first-child {
+                font-size: 11px !important;
             }
-            .service-selector select option {
-                font-size: 0.75rem;
-                padding: 3px 6px;
+            .service-selector-btn .selected-value {
+                font-size: 11px !important;
             }
-            .iframe-header {
-                padding: 10px 16px;
+            .service-selector-btn .arrow {
+                font-size: 9px !important;
+            }
+            .service-option {
+                font-size: 12px;
+                padding: 4px 6px;
             }
         }
 
@@ -450,31 +482,32 @@
         <div class="subtitle">演播联控中心</div>
 
         <div class="button-grid">
-            <!-- TALLY 卡片 -->
             <div class="nav-btn btn-tally" id="tallyMainBtn">
                 <div class="tally-card-content">
                     <span class="icon">🚥</span>
                     <span class="tally-main-title">TALLY</span>
                     <small class="tally-subtitle">BMD•TSL</small>
                 </div>
-                <div class="service-selector" onclick="event.stopPropagation()">
-                    <label for="serviceSelect">服务</label>
-                    <select id="serviceSelect">
-                        <option value="8082" selected>1</option>
-                        <option value="8083">2</option>
-                        <option value="8084">3</option>
-                    </select>
+                <div class="service-selector" id="serviceSelector">
+                    <div class="service-selector-btn" id="serviceSelectorBtn">
+                        <span>服务</span>
+                        <span class="selected-value" id="selectedServiceDisplay">1</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="service-dropdown" id="serviceDropdown">
+                        <div class="service-option" data-value="8082" data-label="1">服务 1</div>
+                        <div class="service-option" data-value="8083" data-label="2">服务 2</div>
+                        <div class="service-option" data-value="8084" data-label="3">服务 3</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- INTERCOM 通话 -->
             <div class="nav-btn btn-agora" data-key="intercom">
                 <span class="icon">🔊</span>
                 <span>INTERCOM</span>
                 <small>音频通话</small>
             </div>
 
-            <!-- PGM返送 -->
             <div class="nav-btn btn-video" data-key="pgm">
                 <span class="icon">🖼️</span>
                 <span>PGM返送</span>
@@ -487,15 +520,12 @@
         </div>
     </div>
 
-    <!-- iframe 模态层 -->
     <div class="iframe-overlay" id="iframeOverlay">
         <div class="iframe-header">
             <div class="module-title" id="currentModuleTitle">
                 <span>📡</span> 模块加载中...
             </div>
-            <button class="back-home-btn" id="closeIframeBtn">
-                ← 返回主页
-            </button>
+            <button class="back-home-btn" id="closeIframeBtn">← 返回主页</button>
         </div>
         <div class="iframe-container" id="iframeContainer">
             <div class="iframe-loading" id="iframeLoading">
@@ -510,6 +540,43 @@
 
     <script>
         (function() {
+            let currentPort = '8082';
+            let currentLabel = '1';
+
+            const serviceSelectorBtn = document.getElementById('serviceSelectorBtn');
+            const serviceDropdown = document.getElementById('serviceDropdown');
+            const selectedServiceDisplay = document.getElementById('selectedServiceDisplay');
+            const serviceOptions = document.querySelectorAll('.service-option');
+
+            serviceSelectorBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                serviceDropdown.classList.toggle('active');
+            });
+
+            serviceOptions.forEach(opt => {
+                opt.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const value = opt.dataset.value;
+                    const label = opt.dataset.label;
+                    currentPort = value;
+                    currentLabel = label;
+                    selectedServiceDisplay.textContent = label;
+                    serviceOptions.forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                    serviceDropdown.classList.remove('active');
+                });
+            });
+
+            document.querySelector('.service-option[data-value="8082"]').classList.add('selected');
+
+            document.addEventListener('click', () => {
+                serviceDropdown.classList.remove('active');
+            });
+
+            serviceDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
             function openFixedUrlInIframe(url, title) {
                 const fixedKey = 'fixed_' + Date.now();
                 const wrapper = document.createElement('div');
@@ -559,7 +626,6 @@
             const currentModuleTitleSpan = document.getElementById('currentModuleTitle');
             const iframeWrappersDiv = document.getElementById('iframeWrappers');
             const closeIframeBtn = document.getElementById('closeIframeBtn');
-            const serviceSelect = document.getElementById('serviceSelect');
             const tallyMainBtn = document.getElementById('tallyMainBtn');
             
             function showErrorMsg(msg) {
@@ -578,10 +644,8 @@
             }
 
             tallyMainBtn.addEventListener('click', () => {
-                const port = serviceSelect.value;
-                const url = `https://101.200.62.170:${port}/monitor.html`;
-                const serviceLabel = serviceSelect.options[serviceSelect.selectedIndex].text;
-                openFixedUrlInIframe(url, `TALLY 监视器 (服务${serviceLabel})`);
+                const url = `https://101.200.62.170:${currentPort}/monitor.html`;
+                openFixedUrlInIframe(url, `TALLY 监视器 (服务${currentLabel})`);
             });
 
             document.querySelector('[data-key="intercom"]').addEventListener('click', () => {
