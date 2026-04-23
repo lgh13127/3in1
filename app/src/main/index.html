@@ -36,7 +36,7 @@
         }
 
         h1 {
-            font-size: 3.2rem;
+            font-size: 3.8rem;
             font-weight: 600;
             color: white;
             letter-spacing: 1px;
@@ -45,64 +45,11 @@
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: rgba(255, 255, 255, 0.7);
             margin-bottom: 30px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             padding-bottom: 20px;
-        }
-
-        .connection-group {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 60px;
-            padding: 15px 25px;
-            margin-bottom: 40px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .input-field {
-            flex: 1;
-            min-width: 280px;
-            max-width: 480px;
-            text-align: left;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .input-field label {
-            display: block;
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-bottom: 6px;
-        }
-
-        .input-field input {
-            width: 100%;
-            padding: 12px 18px;
-            border: none;
-            border-radius: 40px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(4px);
-            color: white;
-            font-size: 1rem;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.2s;
-            outline: none;
-        }
-
-        .input-field input:focus {
-            border-color: #f1c40f;
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 0 0 2px rgba(241, 196, 15, 0.3);
-        }
-
-        .input-field input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
         }
 
         .button-grid {
@@ -115,64 +62,259 @@
 
         .nav-btn {
             flex: 1 1 260px;
+            min-height: 220px;
             border: none;
             border-radius: 40px;
-            padding: 28px 20px;
+            padding: 20px 16px;
             font-size: 1.8rem;
             font-weight: 600;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            gap: 10px;
             transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
             border: 2px solid transparent;
             cursor: pointer;
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            color: white;
+            position: relative;
+            overflow: visible;
         }
 
         .nav-btn .icon {
-            font-size: 3.8rem;
+            font-size: 4.2rem;
             filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+            line-height: 1;
         }
 
         .nav-btn span:not(.icon) {
-            font-size: 1.5rem;
+            font-size: 1.7rem;
             font-weight: 700;
         }
 
         .nav-btn small {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             opacity: 0.8;
             font-weight: normal;
-            margin-top: 4px;
+            margin-top: 2px;
+            display: block;
         }
 
         .nav-btn:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 28px 40px rgba(0, 0, 0, 0.45);
+            transform: translateY(-8px);
+            box-shadow: 0 25px 35px rgba(0, 0, 0, 0.45);
             border-color: #f1c40f;
             filter: brightness(1.02);
         }
 
-        .btn-tally {
-            background: linear-gradient(145deg, #e74c3c, #c0392b);
-            color: white;
-        }
-
         .btn-agora {
             background: linear-gradient(145deg, #3498db, #2980b9);
-            color: white;
         }
 
         .btn-video {
             background: linear-gradient(145deg, #2ecc71, #27ae60);
+        }
+
+        .tally-card-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            gap: 6px;
+        }
+
+        .tally-main-title {
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: 2px;
             color: white;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+        }
+
+        .btn-tally .icon {
+            font-size: 5.5rem;
+        }
+
+        .tally-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-weight: normal;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* ---------- 服务选择器（电脑端极小） ---------- */
+        .service-selector {
+            position: absolute;
+            bottom: 10px;
+            right: 12px;
+            z-index: 10;
+        }
+
+        .service-selector-btn {
+            background: rgba(20, 30, 40, 0.7) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            border-radius: 10px !important;
+            padding: 0px 4px 0px 5px !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 1px !important;
+            font-size: 8px !important;
+            color: white !important;
+            cursor: pointer !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+            font-weight: 500 !important;
+            line-height: 1 !important;
+            height: 16px !important;
+            white-space: nowrap !important;
+        }
+
+        .service-selector-btn:hover {
+            background: rgba(30, 45, 60, 0.9) !important;
+            border-color: rgba(255, 255, 255, 0.35) !important;
+        }
+
+        .service-selector-btn span:first-child {
+            opacity: 0.9 !important;
+            letter-spacing: 0.2px !important;
+            color: #e0e0e0 !important;
+            font-size: 8px !important;
+        }
+
+        .service-selector-btn .selected-value {
+            font-weight: 700 !important;
+            margin: 0 1px !important;
+            font-size: 8px !important;
+        }
+
+        .service-selector-btn .arrow {
+            margin-left: 0px !important;
+            font-size: 7px !important;
+        }
+
+        .service-dropdown {
+            position: absolute;
+            bottom: calc(100% + 2px);
+            right: 0;
+            background: rgba(20, 30, 40, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            min-width: 55px;
+            display: none;
+            z-index: 20;
+        }
+
+        .service-dropdown.active {
+            display: block;
+        }
+
+        .service-option {
+            padding: 5px 8px;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .service-option:last-child {
+            border-bottom: none;
+        }
+
+        .service-option:hover {
+            background: #2c3e50;
+        }
+
+        .service-option.selected {
+            background: #3498db;
+            color: white;
+            font-weight: 700;
+        }
+
+        /* ---------- 移动端：选择框放大 ---------- */
+        @media (max-width: 750px) {
+            .home-card {
+                padding: 30px 20px;
+            }
+            h1 {
+                font-size: 3rem;
+            }
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            .nav-btn {
+                padding: 16px 10px;
+                min-height: 200px;
+            }
+            .nav-btn .icon {
+                font-size: 3.5rem;
+            }
+            .btn-tally .icon {
+                font-size: 4.5rem;
+            }
+            .nav-btn span:not(.icon) {
+                font-size: 1.4rem;
+            }
+            .nav-btn small {
+                font-size: 0.8rem;
+            }
+            .tally-main-title {
+                font-size: 2rem;
+            }
+            .tally-subtitle {
+                font-size: 0.8rem;
+            }
+            .service-selector {
+                bottom: 8px;
+                right: 10px;
+            }
+            .service-selector-btn {
+                font-size: 11px !important;
+                height: 22px !important;
+                padding: 2px 6px 2px 8px !important;
+                border-radius: 12px !important;
+            }
+            .service-selector-btn span:first-child {
+                font-size: 11px !important;
+            }
+            .service-selector-btn .selected-value {
+                font-size: 11px !important;
+            }
+            .service-selector-btn .arrow {
+                font-size: 9px !important;
+            }
+            .service-option {
+                font-size: 12px;
+                padding: 4px 6px;
+            }
+        }
+
+        .btn-tally {
+            cursor: pointer;
+        }
+
+        .btn-tally:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 35px rgba(0, 0, 0, 0.45);
+            border-color: #f1c40f;
         }
 
         .footer-note {
-            margin-top: 48px;
+            margin-top: 40px;
             color: rgba(255, 255, 255, 0.5);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             display: flex;
             justify-content: center;
             gap: 20px;
@@ -249,14 +391,6 @@
             background: #000;
         }
 
-        .iframe-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: #111;
-        }
-
-        /* 多iframe容器：每个模块的iframe独立显示/隐藏 */
         .iframe-wrapper {
             position: absolute;
             top: 0;
@@ -267,11 +401,13 @@
             opacity: 0;
             transition: visibility 0s, opacity 0.2s ease;
         }
+
         .iframe-wrapper.active {
             visibility: visible;
             opacity: 1;
             z-index: 1;
         }
+
         .iframe-wrapper iframe {
             width: 100%;
             height: 100%;
@@ -312,35 +448,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        @media (max-width: 750px) {
-            .home-card {
-                padding: 30px 20px;
-            }
-            .nav-btn {
-                padding: 22px 12px;
-            }
-            .nav-btn .icon {
-                font-size: 3rem;
-            }
-            .nav-btn span:not(.icon) {
-                font-size: 1.3rem;
-            }
-            .connection-group {
-                flex-direction: column;
-                align-items: stretch;
-                border-radius: 32px;
-                gap: 12px;
-                padding: 15px 20px;
-            }
-            .input-field {
-                min-width: auto;
-                width: 100%;
-            }
-            .iframe-header {
-                padding: 10px 16px;
-            }
-        }
-
         .error-toast {
             position: fixed;
             bottom: 30px;
@@ -373,27 +480,35 @@
         <h1>🎙️ 演播智联</h1>
         <div class="subtitle">演播联控中心</div>
 
-        <div class="connection-group">
-            <div class="input-field">
-                <label>🌐 服务器地址</label>
-                <!-- 移除 datalist，只保留输入框，由最近成功地址自动填充 -->
-                <input type="text" id="serverAddress" placeholder="例如: 192.168.1.100 或 studio.example.com" autocomplete="off">
-            </div>
-        </div>
-
         <div class="button-grid">
-            <div class="nav-btn btn-tally" data-page="monitor.html" data-module="TALLY 监视器" data-key="tally">
-                <span class="icon">🔴</span>
-                <span>TSL UMD V5<br>TALLY</span>
-                <small>设备TALLY实时监控</small>
+            <div class="nav-btn btn-tally" id="tallyMainBtn">
+                <div class="tally-card-content">
+                    <span class="icon">🚥</span>
+                    <span class="tally-main-title">TALLY</span>
+                    <small class="tally-subtitle">BMD•TSL</small>
+                </div>
+                <div class="service-selector" id="serviceSelector">
+                    <div class="service-selector-btn" id="serviceSelectorBtn">
+                        <span>服务</span>
+                        <span class="selected-value" id="selectedServiceDisplay">1</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="service-dropdown" id="serviceDropdown">
+                        <div class="service-option" data-value="8082" data-label="1">服务 1</div>
+                        <div class="service-option" data-value="8083" data-label="2">服务 2</div>
+                        <div class="service-option" data-value="8084" data-label="3">服务 3</div>
+                    </div>
+                </div>
             </div>
-            <div class="nav-btn btn-agora" data-page="mobile.html" data-module="INTERCOM 通话" data-key="intercom">
-                <span class="icon">🎤</span>
-                <span>INTERCOM<br>通话</span>
+
+            <div class="nav-btn btn-agora" data-key="intercom">
+                <span class="icon">🔊</span>
+                <span>INTERCOM</span>
                 <small>音频通话</small>
             </div>
-            <div class="nav-btn btn-video" data-page="return.html" data-module="视频返送" data-key="pgm">
-                <span class="icon">📹</span>
+
+            <div class="nav-btn btn-video" data-key="pgm">
+                <span class="icon">🖼️</span>
                 <span>PGM返送</span>
                 <small>音视频返送</small>
             </div>
@@ -409,16 +524,13 @@
             <div class="module-title" id="currentModuleTitle">
                 <span>📡</span> 模块加载中...
             </div>
-            <button class="back-home-btn" id="closeIframeBtn">
-                ← 返回主页
-            </button>
+            <button class="back-home-btn" id="closeIframeBtn">← 返回主页</button>
         </div>
         <div class="iframe-container" id="iframeContainer">
             <div class="iframe-loading" id="iframeLoading">
                 <div class="spinner"></div>
                 <span>正在连接演播服务器...</span>
             </div>
-            <!-- 动态创建的 iframe 包装器会放在这里 -->
             <div id="iframeWrappers"></div>
         </div>
     </div>
@@ -427,341 +539,203 @@
 
     <script>
         (function() {
-            const serverAddressInput = document.getElementById('serverAddress');
-            const homeCard = document.getElementById('homeCard');
+            // 当前选中的端口（用于 Tally）
+            let currentPort = '8082';
+            let currentLabel = '1';
+
+            // DOM 元素
+            const serviceSelectorBtn = document.getElementById('serviceSelectorBtn');
+            const serviceDropdown = document.getElementById('serviceDropdown');
+            const selectedServiceDisplay = document.getElementById('selectedServiceDisplay');
+            const serviceOptions = document.querySelectorAll('.service-option');
+
             const iframeOverlay = document.getElementById('iframeOverlay');
+            const homeCard = document.getElementById('homeCard');
             const iframeLoading = document.getElementById('iframeLoading');
-            const closeIframeBtn = document.getElementById('closeIframeBtn');
             const currentModuleTitleSpan = document.getElementById('currentModuleTitle');
             const iframeWrappersDiv = document.getElementById('iframeWrappers');
-            
-            // ---------- 地址记忆功能：只保留最近一次成功连接的地址 ----------
-            const STORAGE_KEY_LAST_SUCCESS = 'last_success_address';
-            
-            // 获取最近一次成功连接的地址
-            function getLastSuccessAddress() {
-                try {
-                    return localStorage.getItem(STORAGE_KEY_LAST_SUCCESS) || '';
-                } catch(e) {
-                    console.warn(e);
-                    return '';
-                }
-            }
-            
-            // 保存最近一次成功连接的地址
-            function saveLastSuccessAddress(address) {
-                if (!address || typeof address !== 'string') return;
-                const trimmed = address.trim();
-                if (trimmed === '') return;
-                try {
-                    localStorage.setItem(STORAGE_KEY_LAST_SUCCESS, trimmed);
-                } catch(e) { console.warn(e); }
-            }
-            
-            // 初始化输入框：优先显示最近成功地址，否则显示当前hostname（如果有）
-            function initServerAddressInput() {
-                const lastAddr = getLastSuccessAddress();
-                if (lastAddr) {
-                    serverAddressInput.value = lastAddr;
-                    serverAddressInput.placeholder = "服务器地址";
-                } else {
-                    // 尝试使用当前页面的主机名作为默认提示，但不自动填充（避免无效地址）
-                    let currentHost = window.location.hostname;
-                    if (currentHost && !['localhost', '127.0.0.1', '0.0.0.0', '::1'].includes(currentHost)) {
-                        serverAddressInput.placeholder = `例如: ${currentHost} 或 192.168.1.100`;
-                    } else {
-                        serverAddressInput.placeholder = "例如: 192.168.1.100 或 studio.example.com";
-                    }
-                    // 不清空已有值
-                }
-            }
-            
-            // ---------- 其余原有逻辑（适配单地址记忆）----------
+            const closeIframeBtn = document.getElementById('closeIframeBtn');
+            const tallyMainBtn = document.getElementById('tallyMainBtn');
+
+            let loadTimeout = null;
+
+            // 持久化存储每个模块的 iframe wrapper 及状态
+            const moduleWrappers = new Map(); // key: 'intercom' / 'pgm' / 'tally', value: { wrapper, iframe, loaded, url }
+
+            // ---------- 服务选择下拉逻辑 ----------
+            serviceSelectorBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                serviceDropdown.classList.toggle('active');
+            });
+
+            serviceOptions.forEach(opt => {
+                opt.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const value = opt.dataset.value;
+                    const label = opt.dataset.label;
+                    currentPort = value;
+                    currentLabel = label;
+                    selectedServiceDisplay.textContent = label;
+                    serviceOptions.forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                    serviceDropdown.classList.remove('active');
+                });
+            });
+
+            document.querySelector('.service-option[data-value="8082"]').classList.add('selected');
+
+            document.addEventListener('click', () => {
+                serviceDropdown.classList.remove('active');
+            });
+
+            serviceDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // ---------- 错误提示 ----------
             function showErrorMsg(msg) {
                 const toast = document.getElementById('errorToast');
                 toast.textContent = msg;
                 toast.classList.add('show');
                 if (window.toastTimeout) clearTimeout(window.toastTimeout);
-                window.toastTimeout = setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 4000);
+                window.toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
             }
 
-            // 清理地址：去掉协议和末尾斜杠
-            function sanitizeAddress(raw) {
-                let clean = raw.trim();
-                if (!clean) return '';
-                clean = clean.replace(/^https?:\/\//i, '');
-                clean = clean.replace(/\/+$/, '');
-                return clean;
+            // ---------- 关闭模态层（仅隐藏，不销毁） ----------
+            function closeOverlay() {
+                iframeOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+                homeCard.style.display = 'block';
+                iframeLoading.style.display = 'none';
+                // 不删除任何 iframe
             }
 
-            // 判断主机名是否有效
-            function isValidHostname(hostname) {
-                if (!hostname) return false;
-                const invalidPatterns = [
-                    'com.tencent', 'fileprovider', 'wechat', 'localhost', '127.0.0.1',
-                    '0.0.0.0', '::1', 'null', 'undefined'
-                ];
-                const lowerHost = hostname.toLowerCase();
-                for (let pattern of invalidPatterns) {
-                    if (lowerHost.includes(pattern)) return false;
-                }
-                return /^[a-zA-Z0-9.-]+$/.test(hostname) && hostname.length > 0;
-            }
+            // ---------- 核心：打开或切换模块（iframe 持久化） ----------
+            function showModule(moduleKey, url, title) {
+                // 隐藏所有 wrapper
+                document.querySelectorAll('.iframe-wrapper').forEach(w => w.classList.remove('active'));
 
-            // 构建目标URL（固定端口8082，https）
-            function buildTargetUrl(page) {
-                let addressRaw = serverAddressInput.value;
-                let address = sanitizeAddress(addressRaw);
-                if (address === "") {
-                    let currentHost = window.location.hostname;
-                    if (isValidHostname(currentHost)) {
-                        address = currentHost;
-                    } else {
-                        address = '127.0.0.1';
-                    }
-                }
-                const protocol = 'https:';
-                const port = 8082;
-                return `${protocol}//${address}:${port}/${page}`;
-            }
+                let moduleInfo = moduleWrappers.get(moduleKey);
+                if (!moduleInfo) {
+                    // 首次创建
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'iframe-wrapper';
+                    wrapper.setAttribute('data-module-key', moduleKey);
+                    const iframe = document.createElement('iframe');
+                    iframe.title = title;
+                    // ⭐ 关键修改：放宽 sandbox 权限，确保 WebSocket 等正常
+                    iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-presentation allow-downloads allow-popups-to-escape-sandbox');
+                    iframe.setAttribute('allow', 'camera; microphone; autoplay; display-capture; fullscreen');
+                    wrapper.appendChild(iframe);
+                    iframeWrappersDiv.appendChild(wrapper);
 
-            // 存储每个模块的包装器元素和加载状态
-            const modules = {
-                tally: { key: 'tally', page: 'monitor.html', name: 'TALLY 监视器', wrapper: null, iframe: null, loaded: false, url: null },
-                intercom: { key: 'intercom', page: 'mobile.html', name: 'INTERCOM 通话', wrapper: null, iframe: null, loaded: false, url: null },
-                pgm: { key: 'pgm', page: 'return.html', name: '视频返送', wrapper: null, iframe: null, loaded: false, url: null }
-            };
-            
-            let currentActiveKey = null;   // 当前显示的模块key
-            let loadTimeout = null;
-            
-            // 创建模块的iframe包装器（如果尚未创建）
-            function ensureModuleWrapper(module) {
-                if (module.wrapper) return module.wrapper;
-                
-                const wrapper = document.createElement('div');
-                wrapper.className = 'iframe-wrapper';
-                wrapper.setAttribute('data-module-key', module.key);
-                const iframe = document.createElement('iframe');
-                iframe.title = module.name;
-                iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-presentation allow-downloads allow-popups-to-escape-sandbox allow-microphone allow-camera');
-                iframe.setAttribute('allow', 'camera; microphone; autoplay; display-capture; fullscreen');
-                wrapper.appendChild(iframe);
-                iframeWrappersDiv.appendChild(wrapper);
-                
-                module.wrapper = wrapper;
-                module.iframe = iframe;
-                return wrapper;
-            }
-            
-            // 加载指定模块（创建iframe并设置src，如果尚未加载过）
-            function loadModule(moduleKey, forceReload = false) {
-                const module = modules[moduleKey];
-                if (!module) {
-                    showErrorMsg(`未知模块: ${moduleKey}`);
-                    return false;
-                }
-                
-                // 确保包装器存在
-                ensureModuleWrapper(module);
-                
-                // 如果需要强制重载，则清空loaded标志并重新设置src
-                if (forceReload) {
-                    module.loaded = false;
-                    if (module.iframe) {
-                        module.iframe.src = 'about:blank';
-                    }
-                }
-                
-                // 如果尚未加载，则构建URL并加载
-                if (!module.loaded) {
-                    const targetUrl = buildTargetUrl(module.page);
-                    module.url = targetUrl;
-                    // 显示全局loading（因为第一次加载需要时间）
+                    moduleInfo = {
+                        wrapper: wrapper,
+                        iframe: iframe,
+                        loaded: false,
+                        url: url
+                    };
+                    moduleWrappers.set(moduleKey, moduleInfo);
+
+                    // 加载
                     iframeLoading.style.display = 'flex';
                     if (loadTimeout) clearTimeout(loadTimeout);
                     loadTimeout = setTimeout(() => {
-                        if (iframeLoading && iframeLoading.style.display === 'flex') {
+                        if (iframeLoading.style.display === 'flex') {
                             iframeLoading.style.display = 'none';
-                            showErrorMsg(`模块 ${module.name} 加载超时，请检查网络或服务器地址`);
+                            showErrorMsg(`模块 ${title} 加载超时`);
                         }
                     }, 10000);
-                    
-                    module.iframe.onload = () => {
-                        if (loadTimeout) clearTimeout(loadTimeout);
+
+                    iframe.onload = () => {
+                        clearTimeout(loadTimeout);
                         iframeLoading.style.display = 'none';
-                        module.loaded = true;
-                        
-                        // ---------- 关键修改：模块加载成功，将当前使用的地址保存为最近成功地址 ----------
-                        const currentAddr = serverAddressInput.value;
-                        if (currentAddr && currentAddr.trim() !== '') {
-                            saveLastSuccessAddress(currentAddr.trim());
-                        } else {
-                            // 如果输入框为空，但使用了默认地址（例如当前hostname），也保存这个有效的默认地址
-                            const usedAddr = sanitizeAddress(serverAddressInput.value);
-                            if (usedAddr) {
-                                saveLastSuccessAddress(usedAddr);
-                            } else {
-                                let fallbackAddr = window.location.hostname;
-                                if (isValidHostname(fallbackAddr)) {
-                                    saveLastSuccessAddress(fallbackAddr);
-                                }
+                        moduleInfo.loaded = true;
+                    };
+                    iframe.onerror = () => {
+                        clearTimeout(loadTimeout);
+                        iframeLoading.style.display = 'none';
+                        showErrorMsg(`无法加载模块 ${title}`);
+                    };
+                    iframe.src = url;
+                } else {
+                    // 已存在，直接激活
+                    if (!moduleInfo.loaded) {
+                        iframeLoading.style.display = 'flex';
+                        if (loadTimeout) clearTimeout(loadTimeout);
+                        loadTimeout = setTimeout(() => {
+                            if (iframeLoading.style.display === 'flex') {
+                                iframeLoading.style.display = 'none';
+                                showErrorMsg(`模块 ${title} 加载超时`);
                             }
-                        }
-                        
-                        // 加载完成后，如果当前激活的模块就是它，确保显示
-                        if (currentActiveKey === moduleKey) {
-                            // 已经显示，无需额外操作
-                        }
-                    };
-                    module.iframe.onerror = () => {
-                        if (loadTimeout) clearTimeout(loadTimeout);
+                        }, 10000);
+                    } else {
                         iframeLoading.style.display = 'none';
-                        showErrorMsg(`无法加载模块 ${module.name}: ${targetUrl}\n请检查服务器地址是否正确，确保目标服务已开启`);
-                        module.loaded = false;
-                        // 加载失败不保存地址（不覆盖之前的成功地址）
-                    };
-                    module.iframe.src = targetUrl;
-                }
-                return true;
-            }
-            
-            // 切换到指定模块（显示对应的wrapper，隐藏其他）
-            function switchToModule(moduleKey) {
-                if (currentActiveKey === moduleKey) {
-                    // 已经是当前模块，无需切换，但确保overlay可见
-                    if (!iframeOverlay.classList.contains('active')) {
-                        homeCard.style.display = 'none';
-                        iframeOverlay.classList.add('active');
-                        document.body.style.overflow = 'hidden';
-                    }
-                    return;
-                }
-                
-                // 先尝试加载模块（如果未加载过）
-                loadModule(moduleKey);
-                
-                // 更新标题
-                const module = modules[moduleKey];
-                if (module) {
-                    currentModuleTitleSpan.innerHTML = `<span>${module.name}</span>`;
-                }
-                
-                // 隐藏所有wrapper，显示当前选中的
-                for (const key in modules) {
-                    const m = modules[key];
-                    if (m.wrapper) {
-                        m.wrapper.classList.remove('active');
                     }
                 }
-                const activeWrapper = modules[moduleKey].wrapper;
-                if (activeWrapper) {
-                    activeWrapper.classList.add('active');
-                }
-                
-                currentActiveKey = moduleKey;
-                
-                // 确保overlay显示
+
+                // 显示对应的 wrapper
+                moduleInfo.wrapper.classList.add('active');
+                currentModuleTitleSpan.innerHTML = `<span>${title}</span>`;
+
+                // 显示模态层
                 homeCard.style.display = 'none';
                 iframeOverlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                
-                // 如果模块已经加载完成，确保loading隐藏
-                if (modules[moduleKey].loaded) {
-                    iframeLoading.style.display = 'none';
-                } else {
-                    // 如果还没加载完成，loading可能已经在loadModule中显示，保持显示
-                }
             }
-            
-            // 返回主页：隐藏overlay，不清空任何iframe，保留所有状态
-            function closeOverlay() {
-                if (iframeOverlay.classList.contains('active')) {
-                    iframeOverlay.classList.remove('active');
-                    document.body.style.overflow = '';
-                    homeCard.style.display = 'block';
-                    iframeLoading.style.display = 'none';
-                    // 不清空iframe，保留所有模块状态
-                }
-            }
-            
-            // 模块按钮点击事件处理（不再预先保存地址，地址只在成功加载后保存）
-            function onModuleClick(moduleKey) {
-                // 检查地址是否为空，如果为空提示，但不阻止（可能使用默认地址）
-                const currentAddr = serverAddressInput.value;
-                if (!currentAddr || currentAddr.trim() === '') {
-                    showErrorMsg("服务器地址为空，将尝试使用默认地址");
-                }
-                switchToModule(moduleKey);
-            }
-            
-            // 绑定按钮事件
-            const btns = document.querySelectorAll('.nav-btn');
-            btns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const moduleKey = btn.getAttribute('data-key');
-                    if (!moduleKey) {
-                        showErrorMsg("按钮配置缺失 data-key");
-                        return;
+
+            // ---------- TALLY 特殊处理：切换服务时更新 URL 并重新加载 ----------
+            function showTallyModule() {
+                const url = `https://101.200.62.170:${currentPort}/monitor.html`;
+                const title = `TALLY 监视器 (服务${currentLabel})`;
+
+                let moduleInfo = moduleWrappers.get('tally');
+                if (moduleInfo) {
+                    // 如果 URL 变化了，则更新 src 并重新加载
+                    if (moduleInfo.url !== url) {
+                        moduleInfo.url = url;
+                        moduleInfo.loaded = false;
+                        moduleInfo.iframe.src = url;
+                        // 显示加载动画
+                        iframeLoading.style.display = 'flex';
+                        if (loadTimeout) clearTimeout(loadTimeout);
+                        loadTimeout = setTimeout(() => {
+                            if (iframeLoading.style.display === 'flex') {
+                                iframeLoading.style.display = 'none';
+                                showErrorMsg(`模块 ${title} 加载超时`);
+                            }
+                        }, 10000);
+                        moduleInfo.iframe.onload = () => {
+                            clearTimeout(loadTimeout);
+                            iframeLoading.style.display = 'none';
+                            moduleInfo.loaded = true;
+                        };
+                        moduleInfo.iframe.onerror = () => {
+                            clearTimeout(loadTimeout);
+                            iframeLoading.style.display = 'none';
+                            showErrorMsg(`无法加载模块 ${title}`);
+                        };
                     }
-                    onModuleClick(moduleKey);
-                });
+                }
+                showModule('tally', url, title);
+            }
+
+            // ---------- 绑定按钮事件 ----------
+            tallyMainBtn.addEventListener('click', showTallyModule);
+
+            document.querySelector('[data-key="intercom"]').addEventListener('click', () => {
+                showModule('intercom', 'https://101.200.62.170:8081/mobile.html', 'INTERCOM 通话');
             });
-            
-            // 返回主页按钮
+
+            document.querySelector('[data-key="pgm"]').addEventListener('click', () => {
+                showModule('pgm', 'https://101.200.62.170:8081/return.html', 'PGM 返送');
+            });
+
             closeIframeBtn.addEventListener('click', closeOverlay);
-            
-            // ESC 键返回主页
             window.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && iframeOverlay.classList.contains('active')) {
-                    closeOverlay();
-                }
+                if (e.key === 'Escape' && iframeOverlay.classList.contains('active')) closeOverlay();
             });
-            
-            // 初始化：加载最近成功地址到输入框
-            initServerAddressInput();
-            
-            // 可选：监听输入框内容变化，但不需要额外保存（只有成功加载才保存）
-            // 如果用户手动清空并输入新地址，下次成功连接时会覆盖保存
-            
-            // 微调样式
-            const styleCheck = document.createElement('style');
-            styleCheck.textContent = `
-                .button-grid .nav-btn {
-                    min-height: 220px;
-                    justify-content: center;
-                }
-                @media (max-width: 700px) {
-                    .button-grid .nav-btn {
-                        min-height: 190px;
-                    }
-                }
-                .iframe-wrapper {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    visibility: hidden;
-                    opacity: 0;
-                    transition: visibility 0s, opacity 0.2s ease;
-                }
-                .iframe-wrapper.active {
-                    visibility: visible;
-                    opacity: 1;
-                    z-index: 1;
-                }
-                .iframe-wrapper iframe {
-                    width: 100%;
-                    height: 100%;
-                    border: none;
-                    background: #0b1217;
-                }
-            `;
-            document.head.appendChild(styleCheck);
+
         })();
     </script>
 </body>

@@ -539,7 +539,7 @@
 
     <script>
         (function() {
-            // 当前选中的端口（用于 Tally）
+            // 当前选中的端口（用于 Tally 服务映射）
             let currentPort = '8082';
             let currentLabel = '1';
 
@@ -560,7 +560,7 @@
             let loadTimeout = null;
 
             // 持久化存储每个模块的 iframe wrapper 及状态
-            const moduleWrappers = new Map(); // key: 'intercom' / 'pgm' / 'tally', value: { wrapper, iframe, loaded, url }
+            const moduleWrappers = new Map(); // key: 'intercom' / 'pgm' / 'tally'
 
             // ---------- 服务选择下拉逻辑 ----------
             serviceSelectorBtn.addEventListener('click', (e) => {
@@ -607,7 +607,14 @@
                 document.body.style.overflow = '';
                 homeCard.style.display = 'block';
                 iframeLoading.style.display = 'none';
-                // 不删除任何 iframe
+            }
+
+            // ---------- 根据端口映射 Nginx 路径 ----------
+            function getTallyBasePath(port) {
+                if (port === '8082') return '/tsltally';
+                if (port === '8083') return '/tsltally2';
+                if (port === '8084') return '/tsltally3';
+                return '/tsltally'; // 默认
             }
 
             // ---------- 核心：打开或切换模块（iframe 持久化） ----------
@@ -623,7 +630,7 @@
                     wrapper.setAttribute('data-module-key', moduleKey);
                     const iframe = document.createElement('iframe');
                     iframe.title = title;
-                    // ⭐ 关键修改：放宽 sandbox 权限，确保 WebSocket 等正常
+                    // 放宽 sandbox 权限，确保 WebSocket 等正常
                     iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-presentation allow-downloads allow-popups-to-escape-sandbox');
                     iframe.setAttribute('allow', 'camera; microphone; autoplay; display-capture; fullscreen');
                     wrapper.appendChild(iframe);
@@ -686,7 +693,9 @@
 
             // ---------- TALLY 特殊处理：切换服务时更新 URL 并重新加载 ----------
             function showTallyModule() {
-                const url = `https://101.200.62.170:${currentPort}/monitor.html`;
+                const basePath = getTallyBasePath(currentPort);
+                // 默认打开 monitor.html，如需 tally.html 请自行替换
+                const url = `https://101.200.62.170${basePath}/monitor.html`;
                 const title = `TALLY 监视器 (服务${currentLabel})`;
 
                 let moduleInfo = moduleWrappers.get('tally');
@@ -720,15 +729,15 @@
                 showModule('tally', url, title);
             }
 
-            // ---------- 绑定按钮事件 ----------
+            // ---------- 绑定按钮事件（使用 Nginx 代理地址） ----------
             tallyMainBtn.addEventListener('click', showTallyModule);
 
             document.querySelector('[data-key="intercom"]').addEventListener('click', () => {
-                showModule('intercom', 'https://101.200.62.170:8081/mobile.html', 'INTERCOM 通话');
+                showModule('intercom', 'https://101.200.62.170/webrtc/mobile.html', 'INTERCOM 通话');
             });
 
             document.querySelector('[data-key="pgm"]').addEventListener('click', () => {
-                showModule('pgm', 'https://101.200.62.170:8081/return.html', 'PGM 返送');
+                showModule('pgm', 'https://101.200.62.170/webrtc/return.html', 'PGM 返送');
             });
 
             closeIframeBtn.addEventListener('click', closeOverlay);
